@@ -2,23 +2,136 @@
 @use 'base/variables' as v;
 @use "sass:color";
 
-.login{
-    margin-top: 5rem;
-    .skg{
-        background: linear-gradient(to right, v.$cyan 0%, color.adjust(v.$cyan, $lightness: 30%) 100%);
-        color: transparent;
-        background-clip: text;
-        text-align: center;
-        font-size: 7rem;       
+.login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, v.$grisOscuro, color.adjust(v.$negro, $lightness: -25%));
+  padding: 1.5rem;
 
-        @include m.tablet{
-            font-size: 10rem;
+  .login-card {
+    background: v.$blanco;
+    width: 100%;
+    max-width: 380px;
+    padding: 1.5rem 1rem;
+    border-radius: 1rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    text-align: center;
+    animation: fadeIn 0.6s ease;
+    display: grid;
+    grid-template-columns: none;
 
+   @include m.tablet {      
+        grid-template-columns: 1fr 1fr;
+        gap: 1.2rem;
+        max-width: 800px;
+        justify-content: center;
+        align-content: center;
+    }
+    .cont{
+        margin-top: 0 !important;
+        @include m.tablet {      
+        align-content: center;
+    }
+    }
+
+    .logo-skg {
+      background: linear-gradient(to right, v.$negro, color.adjust(v.$cyan, $lightness: 30%));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 5rem;
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+    }
+
+    .descripcion {
+      font-size: 1.3rem;
+      color: v.$grisOscuro;
+      margin-bottom: 1rem;
+    }
+
+    // Formulario
+    .formulario_l {
+      display: grid;
+      gap: 1rem; // menos separación entre campos
+
+      fieldset{
+        border: 1px solid v.$grisClaro;
+        border-radius: 0.5rem;     
+        padding: 0.8rem;
+        margin: 0;
+      }
+
+      legend {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: v.$cyan;
+            padding: 0 0.5rem;                 // un poco de espacio para que no corte el texto
         }
 
+      .campof {
+        display: flex;
+        flex-direction: column;
+
+        label {
+          font-size: 1.2rem;
+          font-weight: 500;
+          margin-bottom: 0.3rem;
+          color: v.$grisOscuro;
+        }
+
+        input {
+          width: 100%;
+          padding: 0.8rem 1rem;
+          border: 1px solid v.$grisClaro;
+          border-radius: 0.5rem;
+          font-size: 1.2rem;
+          transition: all 0.3s ease;
+
+          &:focus {
+            border-color: v.$cyan;
+            box-shadow: 0 0 0 3px rgba(v.$cyan, 0.15);
+            outline: none;
+            font-size: 1.2rem;
+          }
+        }
+      }
+
+      // Botón ocupa todo el ancho siempre
+      .btn-login {
+        margin-top: 1.5rem;
+        grid-column: 1 / -1; // ocupa ambas columnas en desktop
+        @include m.boton(v.$cyan, v.$blanco);
+        padding: 1rem;
+        font-size: 1.4rem;
+        font-weight: 600;
+        border-radius: 0.5rem;
+
+        &:hover {
+          background: color.adjust(v.$cyan, $lightness: -5%);
+          transform: translateY(-2px);
+          box-shadow: 0 5px 12px rgba(v.$cyan, 0.25);
+        }
+      }
     }
 
-    input[type="submit"]{
-        @include m.boton(v.$cyan, v.$blanco); 
+    .extra {
+      margin-bottom: 1.5rem;
+
+        color: v.$cyan;
+        text-decoration: none;
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: color.adjust(v.$cyan, $lightness: -10%);
+        }
+      
     }
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

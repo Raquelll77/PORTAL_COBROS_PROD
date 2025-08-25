@@ -1,21 +1,33 @@
-<div class="contenedor-sm login">
+<div class="login">
+    <div class="login-card">
+        <div class="cont">
+            <h1 class="logo-skg">SKG</h1>
+            <p class="extra">Gestiona tus créditos </p>
+        </div>
+
+        <div class="cont">
+
+            <form class="formulario_l" action="" method="POST">
+                <fieldset>
+                    <legend class="descripcion">
+                        Iniciar sesión en tu cuenta
+                    </legend>
+                    <div class="campof">
+                        <label for="usuario">Usuario</label>
+                        <input type="text" id="usuario" name="usuario" placeholder="Tu usuario" required>
+                    </div>
+
+                    <div class="campof">
+                        <label for="password">Contraseña</label>
+                        <input type="password" id="password" name="password" placeholder="••••••••" required>
+                    </div>
+
+                    <button type="submit" class="btn-login">Iniciar Sesión</button>
+                </fieldset>
+
+            </form>
 
 
-    <?php include_once __DIR__ . '/../templates/nombre-sitio.php' ?>
-
-    <div class="contenedor-sm">
-        <p class="descripcion-pagina">Iniciar Sesión</p>
-        <?php include_once __DIR__ . '/../templates/alertas.php'; ?>
-        <form class="formulario" action="" method="POST">
-            <div class="campo">
-                <label for="usuario">Usuario:</label>
-                <input type="text" id="usuario" placeholder="Tu usuario" name="usuario">
-            </div>
-            <div class="campo">
-                <label for="password">Password:</label>
-                <input type="password" id="password" placeholder="Tu password" name="password">
-            </div>
-            <input type="submit" class="boton" value="Iniciar Sesión">
-        </form>
+        </div>
     </div>
 </div>
