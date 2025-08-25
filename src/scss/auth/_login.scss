@@ -22,18 +22,18 @@
     display: grid;
     grid-template-columns: none;
 
-   @include m.tablet {      
-        grid-template-columns: 1fr 1fr;
-        gap: 1.2rem;
-        max-width: 800px;
-        justify-content: center;
-        align-content: center;
+    @include m.tablet {
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+      max-width: 800px;
+      justify-content: center;
+      align-content: center;
     }
-    .cont{
-        margin-top: 0 !important;
-        @include m.tablet {      
+
+    .cont {
+      @include m.tablet {
         align-content: center;
-    }
+      }
     }
 
     .logo-skg {
@@ -54,21 +54,21 @@
     // Formulario
     .formulario_l {
       display: grid;
-      gap: 1rem; // menos separación entre campos
+      gap: 1rem;
 
-      fieldset{
+      fieldset {
         border: 1px solid v.$grisClaro;
-        border-radius: 0.5rem;     
+        border-radius: 0.5rem;
         padding: 0.8rem;
         margin: 0;
       }
 
       legend {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: v.$cyan;
-            padding: 0 0.5rem;                 // un poco de espacio para que no corte el texto
-        }
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: v.$cyan;
+        padding: 0 0.5rem;
+      }
 
       .campof {
         display: flex;
@@ -100,38 +100,46 @@
 
       // Botón ocupa todo el ancho siempre
       .btn-login {
+        display: block;
+        width: 100%;
         margin-top: 1.5rem;
-        grid-column: 1 / -1; // ocupa ambas columnas en desktop
-        @include m.boton(v.$cyan, v.$blanco);
         padding: 1rem;
         font-size: 1.4rem;
         font-weight: 600;
         border-radius: 0.5rem;
+        background-color: v.$cyan;
+        color: v.$blanco;
+        border:none;
 
         &:hover {
           background: color.adjust(v.$cyan, $lightness: -5%);
           transform: translateY(-2px);
           box-shadow: 0 5px 12px rgba(v.$cyan, 0.25);
+          cursor: pointer;
         }
       }
     }
 
     .extra {
       margin-bottom: 1.5rem;
+      color: v.$cyan;
+      text-decoration: none;
+      transition: color 0.3s ease;
 
-        color: v.$cyan;
-        text-decoration: none;
-        transition: color 0.3s ease;
-
-        &:hover {
-          color: color.adjust(v.$cyan, $lightness: -10%);
-        }
-      
+      &:hover {
+        color: color.adjust(v.$cyan, $lightness: -10%);
+      }
     }
   }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

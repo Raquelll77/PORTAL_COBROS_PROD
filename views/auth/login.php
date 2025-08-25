@@ -21,9 +21,9 @@
                         <label for="password">Contraseña</label>
                         <input type="password" id="password" name="password" placeholder="••••••••" required>
                     </div>
-
                     <button type="submit" class="btn-login">Iniciar Sesión</button>
                 </fieldset>
+
 
             </form>
 
