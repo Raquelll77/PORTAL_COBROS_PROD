@@ -8,7 +8,20 @@
         <div class="cont">
 
             <form class="formulario_l" action="" method="POST">
+
                 <fieldset>
+                    <?php if (!empty($alertas)): ?>
+                        <div class="alertas">
+                            <?php foreach ($alertas as $tipo => $mensajes): ?>
+                                <?php foreach ($mensajes as $mensaje): ?>
+                                    <div class="alerta <?= htmlspecialchars($tipo) ?>">
+                                        <?= htmlspecialchars($mensaje) ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+
                     <legend class="descripcion">
                         Iniciar sesión en tu cuenta
                     </legend>
@@ -21,6 +34,7 @@
                         <label for="password">Contraseña</label>
                         <input type="password" id="password" name="password" placeholder="••••••••" required>
                     </div>
+
                     <button type="submit" class="btn-login">Iniciar Sesión</button>
                 </fieldset>
 
