@@ -1,0 +1,57 @@
+@use 'base/mixins' as m;
+@use 'base/variables' as v;
+
+.dashboard {
+    background-color: v.$grisClaro;
+    width: 100%; // Asegura que ocupe el 100% del ancho en cualquier dispositivo
+
+    @include m.tablet {
+        display: flex;
+        height: 100vh;
+    }
+
+    .principal {
+        flex: 1;
+        overflow-y: auto; // Hacer que el contenido sea desplazable
+       
+    }
+
+    h1 { 
+        margin-top: 7rem;
+        text-align: center;
+        font-weight: 900; // Asegúrate de que el font-weight esté en 900 en lugar de 90
+    }
+}
+
+.contenido {
+    padding-top: 2rem;
+    padding-inline: 2rem; // Reduce el padding en pantallas pequeñas
+    display: grid;
+    gap: 4rem;
+
+    // Cambia el layout para pantallas pequeñas
+    grid-template-columns: 1fr; // Una columna para dispositivos pequeños
+
+    @include m.tablet {
+        padding-inline: 7rem;
+        grid-template-columns: repeat(3, 1fr); // Tres columnas de ancho igual en pantallas más grandes
+    }
+
+    img {
+        width: 50%;
+    }
+
+    .contenido-seccion {
+        text-align: center; /* Alinea el texto dentro de cada sección */
+        background-color: v.$blanco;
+        border-radius: 1rem;
+        padding: 2rem;
+        transition-property: scale;
+        transition-duration: 300ms;
+        box-shadow: 1px 12px 9px -13px rgba(0,0,0,0.4);
+
+        &:hover {
+            scale: 1.1;
+        }
+    }
+}

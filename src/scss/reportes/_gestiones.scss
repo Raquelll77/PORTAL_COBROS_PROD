@@ -1,0 +1,36 @@
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+
+
+.grid-2{
+    @include m.tablet{
+
+        @include m.grid(2, 1rem);
+    }
+}
+
+.grid-3{
+
+    @include m.tablet{
+
+        @include m.grid(3, 1rem)
+
+    }
+}
+
+
+.boton-excel{
+
+    background-color: v.$verde;
+    color: white;
+    height: 2.5rem;
+    margin-top: auto;
+    border: none;
+    border-radius: 4px;
+    font-weight: 900;
+
+    &:hover{
+        cursor: pointer;
+        background-color: darken(v.$verde, $amount: 8%);
+    }
+}

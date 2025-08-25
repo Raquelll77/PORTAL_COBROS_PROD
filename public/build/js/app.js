@@ -1,0 +1,1 @@
+document.addEventListener("DOMContentLoaded",(function(){document.querySelectorAll(".clickable-row").forEach((e=>{e.addEventListener("click",(function(){window.location.href=this.dataset.href}))}))}));

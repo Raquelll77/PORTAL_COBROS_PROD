@@ -1,0 +1,157 @@
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+
+
+.contenedor{
+    font-family:  v.$fuente_textos;
+    margin-top: 2rem;
+    background-color: v.$blanco;
+    border-radius: .5rem;
+    box-shadow: 1px 12px 9px -13px rgba(0,0,0,0.4);
+
+    .contenido{
+        margin: 0;
+        padding: 0;
+    }
+
+
+    form{
+        .campo{
+        
+            input[type="text"], select, input[type="date"], input[type="number"] {
+                border: 1px solid #e0e0e0;
+                border-radius: 4px;
+                padding: 8px 12px;
+                font-size: 14px;
+                width: 100%; /* Ajusta el ancho según tus necesidades */
+
+                &:focus {
+                    border: 1px solid v.$cyan; /* Aplica el color del borde al enfocar */
+                    outline: none; /* Opcional: elimina el borde azul predeterminado del navegador */
+                }
+            }
+            label {
+                font-size: 16px;
+                font-weight: bold;
+                color: #333;
+                margin-bottom: 5px;
+                display: block;
+            }
+    
+                
+            }
+            input::placeholder {
+                color: #c0c0c0; /* Ajusta el color a un gris claro */
+            }
+    
+            .boton-submit{
+                @include m.boton(darken(v.$cyan, 20%), v.$blanco);
+                margin: 1rem 0;
+                font-size: 1.1rem;
+                padding: 1rem 2rem;
+                border-radius: .5rem;
+            }
+            
+    }
+  
+        
+    }
+
+
+.tabla-contenedor{
+
+    margin: 0 auto;
+    width: 95%;
+    max-height: 540px;  // Ajusta la altura máxima según tus necesidades
+    overflow-y: auto;   // Habilita el scroll vertical
+    overflow-x: auto;   // Habilita el scroll horizontal en caso de ser necesario
+    border-radius: 8px;
+    // Estilos para la tabla
+
+table {
+
+    border-collapse: collapse;
+    font-size: 1rem;
+    color: v.$negro;
+
+    th, td {
+        padding: 0.8rem;
+        border: 1px solid v.$grisClaro;
+        text-align: left;
+
+        &:first-child {
+            border-left: none;
+        }
+
+        &:last-child {
+            border-right: none;
+        }
+    }
+
+    th {
+        background-color: v.$cyan;
+        color: v.$blanco;
+        font-weight: bold;
+        /* text-transform: uppercase; */
+    }
+
+    tr:nth-child(even) {
+        background-color: v.$blanco;
+    }
+
+    tr:hover {
+        background-color: lighten(v.$gris, 40%);
+        cursor: pointer;
+    }
+}
+
+// Mensaje de no resultados
+p {
+    font-size: 1rem;
+    color: v.$negro;
+    margin-top: 1.5rem;
+    text-align: center;
+}
+}
+
+.text-second{
+    text-align: center;
+}
+
+#clientes-asignados {
+    .tabla-contenedor {
+        max-height: 600px; // Altura máxima con scroll vertical
+        overflow-y: auto; // Habilita scroll vertical
+        overflow-x: auto; // Habilita scroll horizontal solo si es necesario
+        margin-bottom: 2rem; // Espaciado inferior
+        border-radius: 8px; // Esquinas redondeadas
+
+        table {
+            width: 100%; // La tabla ocupa el 100% del contenedor
+            font-size: 14px; // Tamaño de fuente adecuado
+            border-collapse: collapse; // Bordes compactos
+            table-layout: auto; // Permite que las columnas se ajusten automáticamente
+
+            th, td {
+                padding: 8px 10px; // Ajuste de espacio interno
+                white-space: nowrap; // Evita que el texto se rompa en líneas
+                text-overflow: ellipsis; // Texto que se corta con puntos suspensivos si es demasiado largo
+            }
+
+            th {
+                position: sticky; // Encabezados fijos al hacer scroll
+                top: 0; // Mantener encabezados visibles
+                background-color: v.$cyan; // Fondo del encabezado
+                color: v.$blanco; // Texto del encabezado
+                z-index: 2; // Prioridad sobre las filas
+            }
+
+            tbody tr {
+                &:hover {
+                    background-color: lighten(v.$gris, 40%);
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+}
