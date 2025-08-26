@@ -4,7 +4,7 @@ require 'funciones.php';
 require 'database.php';
 require __DIR__ . '/../vendor/autoload.php';
 // config.php
-define('BASE_URL', '/PORTAL_COBROS_PROD/public');
+define('BASE_URL', '/PORTAL-COBROS/public');
 
 
 // Conectarnos a la base de datos

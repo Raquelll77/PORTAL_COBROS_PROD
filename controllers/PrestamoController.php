@@ -140,12 +140,12 @@ class PrestamoController
     {
         isAuth();
         header('Content-Type: application/json');
-    
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             echo json_encode(['status' => 'error', 'mensaje' => 'Método no permitido']);
             exit;
         }
-    
+
         // Validación
         if (
             empty($_POST['prenumero']) ||
@@ -157,57 +157,57 @@ class PrestamoController
             echo json_encode(['status' => 'error', 'mensaje' => 'Todos los campos son obligatorios.']);
             exit;
         }
-    
-        $prenumero  = $_POST['prenumero'];
-        $direccion  = $_POST['direccion_visitada'];
-        $fecha      = $_POST['fecha_visita'];
+
+        $prenumero = $_POST['prenumero'];
+        $direccion = $_POST['direccion_visitada'];
+        $fecha = $_POST['fecha_visita'];
         $creado_por = $_SESSION['nombre'] ?? 'Desconocido';
-    
+
         // 🚨 Ruta absoluta hacia /public/uploads/visitas
         $upload_dir = __DIR__ . '/../public/uploads/visitas/';
-    
+
         if (!$upload_dir) {
             echo json_encode(['status' => 'error', 'mensaje' => 'No se encontró la carpeta destino']);
             exit;
         }
-    
+
         if (!file_exists($upload_dir)) {
             mkdir($upload_dir, 0777, true);
         }
-    
+
         // Crear nombres únicos
-        $foto_maps  = uniqid("{$prenumero}_maps_")  . '_' . basename($_FILES['foto_maps']['name']);
+        $foto_maps = uniqid("{$prenumero}_maps_") . '_' . basename($_FILES['foto_maps']['name']);
         $foto_lugar = uniqid("{$prenumero}_lugar_") . '_' . basename($_FILES['foto_lugar']['name']);
-    
+
         // Rutas públicas que se guardarán en la BD
-        $maps_path  = '/uploads/visitas/' . $foto_maps;
+        $maps_path = '/uploads/visitas/' . $foto_maps;
         $lugar_path = '/uploads/visitas/' . $foto_lugar;
-    
+
         // Destino físico
-        $target_maps  = $upload_dir . $foto_maps;
+        $target_maps = $upload_dir . $foto_maps;
         $target_lugar = $upload_dir . $foto_lugar;
-    
+
         // Mover archivos con verificación
         if (!move_uploaded_file($_FILES['foto_maps']['tmp_name'], $target_maps)) {
             echo json_encode(['status' => 'error', 'mensaje' => "Error al subir foto Maps → $target_maps"]);
             exit;
         }
-    
+
         if (!move_uploaded_file($_FILES['foto_lugar']['tmp_name'], $target_lugar)) {
             echo json_encode(['status' => 'error', 'mensaje' => "Error al subir foto Lugar → $target_lugar"]);
             exit;
         }
-    
+
         // Guardar en BD (solo las rutas relativas públicas)
         $visita = new VisitaDomiciliar([
-            'prenumero'          => $prenumero,
+            'prenumero' => $prenumero,
             'direccion_visitada' => $direccion,
-            'fecha_visita'       => $fecha,
-            'foto_maps'          => $maps_path,
-            'foto_lugar'         => $lugar_path,
-            'creado_por'         => $creado_por
+            'fecha_visita' => $fecha,
+            'foto_maps' => $maps_path,
+            'foto_lugar' => $lugar_path,
+            'creado_por' => $creado_por
         ]);
-    
+
         if ($visita->guardar()) {
             echo json_encode(['status' => 'success', 'mensaje' => 'Guardado correctamente']);
         } else {
@@ -215,7 +215,7 @@ class PrestamoController
         }
         exit;
     }
-    
+
     public static function obtenerHistorialVisitas()
     {
         isAuth();
@@ -277,5 +277,28 @@ class PrestamoController
     {
         $fecha_obj = \DateTime::createFromFormat($formato, $fecha);
         return $fecha_obj ? $fecha_obj->format('Y-m-d H:i:s') : null;
+    }
+
+    public static function estadoCuentaView(Router $router)
+    {
+        $pre = $_GET['prenumero'] ?? null;
+        if (!$pre) {
+            http_response_code(400);
+            echo "Falta el parámetro 'prenumero'.";
+            return;
+        }
+
+        // Cargas
+        $infoCliente = ClientesPrestamos::obtenerInfoCliente($pre);   // array de filas
+        $saldoPagoHoy = ClientesPrestamos::obtenerSaldoDia($pre);      // array de filas
+        $movimientos = ClientesPrestamos::obtenerEstadoCuenta($pre);  // array de filas
+
+        // Render
+        $router->render('prestamos/estado_cuenta', [
+            'pre' => $pre,
+            'infoCliente' => $infoCliente,   // p.ej. $infoCliente[0] si viene una fila
+            'saldoPagoHoy' => $saldoPagoHoy,  // p.ej. $saldoPagoHoy[0]
+            'movimientos' => $movimientos
+        ]);
     }
 }

@@ -1,7 +1,7 @@
 Options -MultiViews
 
 RewriteEngine On
-RewriteBase /PORTAL_COBROS_PROD/public/
+RewriteBase /PORTAL-COBROS/public/
 
 # Si es un archivo o carpeta existente, no lo toques
 RewriteCond %{REQUEST_FILENAME} -f [OR]

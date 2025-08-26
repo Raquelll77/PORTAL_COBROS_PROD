@@ -1,5 +1,4 @@
-RewriteEngine On
-
-# Si entra a /PORTAL_COBROS_PROD/, redirigir a /PORTAL_COBROS_PROD/public/
-RewriteCond %{REQUEST_URI} ^/PORTAL_COBROS_PROD/?$
-RewriteRule ^(.*)$ /PORTAL_COBROS_PROD/public/ [L,R=301]
+RewriteEngine On 
+# Si entra a /PORTAL-COBROS/, redirigir a /PORTAL-COBROS/public/ 
+RewriteCond %{REQUEST_URI} ^/PORTAL-COBROS/?$ 
+RewriteRule ^(.*)$ /PORTAL-COBROS/public/ [L,R=301]

@@ -394,19 +394,23 @@ table td, table th {
     }
 }
 
+.botones-detalle{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
 
-
-.boton-volver{
+.boton-volver, .boton-estado-cuenta{
     background-color: v.$cyan;
     color: v.$blanco;
     padding: 1rem;
     border-radius: 0.5rem;
     text-transform: uppercase;
-    margin-top: 25rem;
     font-weight: bold;
 } 
 
-.boton-volver:hover{
+.boton-volver:hover, .boton-estado-cuenta:hover{
     color: v.$blanco;
     background-color: darken(v.$cyan, 20%);
    

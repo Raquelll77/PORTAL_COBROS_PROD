@@ -269,6 +269,32 @@ class ClientesPrestamos extends ActiveRecord
         ];
     }
 
+    public static function obtenerEstadoCuenta($prenumero)
+    {
+        self::useSQLSrv2();
+        $sql = "EXEC sp_GetEstadoCuentaSKG @prenumero = ?";
+        $params = [$prenumero];
+        return self::consultarSQL($sql, $params, /* storedProc */ true); // array de filas
+    }
+
+    /** Datos generales del cliente/préstamo (cabecera) */
+    public static function obtenerInfoCliente($prenumero)
+    {
+        self::useSQLSrv2();
+        $sql = "EXEC spObtenerdatosClientes @prenumero = ?";
+        $params = [$prenumero];
+        return self::consultarSQL($sql, $params, true);
+    }
+
+    /** Totales al día (mora, capital vencido, total fecha, etc.) */
+    public static function obtenerSaldoDia($prenumero)
+    {
+        self::useSQLSrv2();
+        $sql = "EXEC spSaldoCuentaDia_modificado @prenumero = ?";
+        $params = [$prenumero];
+        return self::consultarSQL($sql, $params, true);
+    }
+
 
 
 
