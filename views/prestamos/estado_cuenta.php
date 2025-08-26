@@ -95,20 +95,30 @@
                         <?php if (!empty($movimientos)): ?>
                             <?php foreach ($movimientos as $row): ?>
                                 <?php
-                                // Si el SP entrega "Dias Atraso"/"Días Atraso", marca la fila
                                 $diasKey = array_key_exists('Dias Atraso', $row) ? 'Dias Atraso' :
                                     (array_key_exists('Días Atraso', $row) ? 'Días Atraso' : null);
                                 $rowClass = ($diasKey && (int) $row[$diasKey] > 0) ? 'negative' : '';
+                                $intColumns = ['Dias Atraso', 'Días Atraso', 'No Cuota', 'No. Cuota', 'Cuota No', 'N° Cuota', 'Numero Cuota', 'Número Cuota'];
                                 ?>
                                 <tr class="<?= $rowClass ?>">
-                                    <?php foreach ($row as $val): ?>
+                                    <?php foreach ($row as $key => $val): ?>
                                         <?php
                                         if (is_array($val))
                                             $val = implode(', ', $val);
-                                        $cell = is_numeric($val) ? number_format((float) $val, 2) : (string) $val;
-                                        // recortar ISO date a YYYY-MM-DD si viene con tiempo
+
+                                        // Fecha ISO → recorta a YYYY-MM-DD
+                                        $cell = (string) $val;
                                         if (preg_match('/^\d{4}-\d{2}-\d{2}T?\s?\d{0,2}:?\d{0,2}:?\d{0,2}/', $cell)) {
                                             $cell = substr($cell, 0, 10);
+                                        } elseif (is_numeric($val)) {
+                                            $num = $val + 0; // cast a numérico
+                                            if (in_array($key, $intColumns, true) || fmod((float) $num, 1.0) == 0.0) {
+                                                // columnas enteras o número entero → sin decimales
+                                                $cell = number_format((float) $num, 0, '.', ',');
+                                            } else {
+                                                // decimales → 2 decimales
+                                                $cell = number_format((float) $num, 2, '.', ',');
+                                            }
                                         }
                                         ?>
                                         <td><?= htmlspecialchars($cell) ?></td>
@@ -121,6 +131,7 @@
                             </tr>
                         <?php endif; ?>
                     </tbody>
+
                 </table>
             </div>
         </div>

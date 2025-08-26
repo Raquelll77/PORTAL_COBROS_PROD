@@ -295,6 +295,7 @@ class PrestamoController
 
         // Render
         $router->render('prestamos/estado_cuenta', [
+            'titulo' => "Estado de Cuenta",
             'pre' => $pre,
             'infoCliente' => $infoCliente,   // p.ej. $infoCliente[0] si viene una fila
             'saldoPagoHoy' => $saldoPagoHoy,  // p.ej. $saldoPagoHoy[0]

@@ -33,7 +33,7 @@ $router->get('/prestamos/obtener-historial-visitas', [PrestamoController::class,
 $router->post('/prestamos/guardar-referencia', [PrestamoController::class, 'guardarReferencia'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO']);
 $router->get('/prestamos/obtener-referencias', [PrestamoController::class, 'obtenerReferencias'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO']);
 
-$router->get('/prestamos/estado-cuenta', [PrestamoController::class, 'estadoCuentaView']);
+$router->get('/prestamos/estado-cuenta', [PrestamoController::class, 'estadoCuentaView'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO']);
 
 
 
