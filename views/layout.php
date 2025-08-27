@@ -28,13 +28,31 @@
     <?php $hideChrome = $hideChrome ?? false;
 
     if (!$hideChrome) { ?>
-        <div id="loftloader-wrapper">
-            <div class="loader-content">
+        <div id="loftloader-wrapper" style="
+            position:fixed;
+            top:0;left:0;
+            width:100%;height:100%;
+            background:rgba(0,0,0,0.4);
+            z-index:9999;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            backdrop-filter:blur(4px);
+        ">
+            <div class="loader-content" style="display:flex;flex-direction:column;align-items:center;">
                 <img src="<?= BASE_URL ?>/build/img/logoskg-transparente.png" alt="Logo SKG"
-                    style="width:200px;height:auto;" />
-                <div class="spinner"></div>
+                    style="width:200px;height:auto;display:block;opacity:0.7; animation: pulse 1.5s infinite; " />
+                <div class="spinner" style="
+            border:4px solid rgba(0,0,0,0.1);
+            border-left-color:#333;
+            border-radius:50%;
+            width:40px;height:40px;
+            margin-top:15px;
+            animation:spin 1s linear infinite;">
+                </div>
             </div>
         </div>
+
     <?php } ?>
 
     <?php
@@ -65,38 +83,19 @@
             /* evita scroll mientras carga */
         }
 
-        /* Overlay que cubre toda la pantalla */
+        /* Estado inicial visible */
         #loftloader-wrapper {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(4px);
+            opacity: 1;
+            transition: opacity .4s ease;
         }
 
-        #loftloader-wrapper .loader-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* Estilo del logo */
-        #loftloader-wrapper img {
-            width: 200px;
-            height: auto;
-            animation: pulse 1.5s infinite;
-            opacity: 0.7;
-            /* 70% de opacidad */
+        /* Estado oculto */
+        #loftloader-wrapper.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
 
 
-        /* Animación de “latido” */
         @keyframes pulse {
             0% {
                 transform: scale(1);
@@ -112,16 +111,6 @@
                 transform: scale(1);
                 opacity: 1;
             }
-        }
-
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: #333;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            margin-top: 15px;
-            animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
@@ -150,26 +139,22 @@
 
     <script>
         // Ocultar loader cuando la página haya cargado
-        $(window).on('load pageshow', function (e) {
-            if (e.persisted) {
-                location.reload();
-            } else {
-                $("#loftloader-wrapper").fadeOut(800, function () {
-                    $("body").css("overflow", "auto"); // vuelve a habilitar scroll
-                });
-            }
+        $(window).on('load pageshow', function () {
+            $("#loftloader-wrapper").addClass("hidden").one("transitionend", function () {
+                $("body").css("overflow", "auto");
+            });
         });
-
 
         // Mostrar loader antes de salir/navegar
         $(window).on('beforeunload pagehide', function (e) {
             if (e.persisted) {
                 location.reload();
             } else {
-                $("#loftloader-wrapper").show();
+                $("#loftloader-wrapper").removeClass("hidden");
                 $("body").css("overflow", "hidden");
             }
         });
+
 
     </script>
 
