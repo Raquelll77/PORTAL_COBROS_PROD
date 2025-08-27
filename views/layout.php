@@ -25,6 +25,14 @@
 </head>
 
 <body>
+    <div id="loftloader-wrapper">
+        <div class="loader-content">
+            <img src="<?= BASE_URL ?>/build/img/logoskg-transparente.png" alt="Logo SKG"
+                style="width:200px;height:auto;" />
+            <div class="spinner"></div>
+        </div>
+    </div>
+
     <?php
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
@@ -45,6 +53,88 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <!-- Loader personalizado con logo -->
+
+    <style>
+        body {
+            overflow: hidden;
+            /* evita scroll mientras carga */
+        }
+
+        /* Overlay que cubre toda la pantalla */
+        #loftloader-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.6);
+            /* 👈 sin fondo */
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+
+        #loftloader-wrapper .loader-content {
+            display: flex;
+            flex-direction: column;
+            /* 👈 coloca el spinner debajo */
+            align-items: center;
+        }
+
+
+
+        /* Estilo del logo */
+        #loftloader-wrapper img {
+            width: 200px;
+            height: auto;
+            animation: pulse 1.5s infinite;
+            opacity: 0.7;
+            /* 70% de opacidad */
+        }
+
+
+        /* Animación de “latido” */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #333;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-top: 15px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+
 
     <script>
         // Inicialización global segura
@@ -57,6 +147,33 @@
     <?php if (!$hideChrome): ?>
         <?php include __DIR__ . '/principal/footer-dashboard.php'; ?>
     <?php endif; ?>
+
+    <script>
+        // Ocultar loader cuando la página haya cargado
+        $(window).on('load pageshow', function (e) {
+            if (e.persisted) {
+                location.reload();
+            } else {
+                $("#loftloader-wrapper").fadeOut(800, function () {
+                    $("body").css("overflow", "auto"); // vuelve a habilitar scroll
+                });
+            }
+        });
+
+
+        // Mostrar loader antes de salir/navegar
+        $(window).on('beforeunload pagehide', function (e) {
+            if (e.persisted) {
+                location.reload();
+            } else {
+                $("#loftloader-wrapper").show();
+                $("body").css("overflow", "hidden");
+            }
+        });
+
+    </script>
+
+
 </body>
 
 </html>
