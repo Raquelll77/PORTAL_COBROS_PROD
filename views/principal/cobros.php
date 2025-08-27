@@ -43,39 +43,37 @@
 
 
         <div class="tabla-contenedor">
-            <?php if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                if (!empty($prestamos)) { ?>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>CardCode</th>
-                                <th>Nombre</th>
-                                <th>Identidad</th>
-                                <th>PreNumero</th>
-                                <th>Fecha de Aprobacion</th>
-                                <th>Estatus</th>
-                                <th>Comentario</th>
+            <?php if (!empty($prestamos)) { ?>
+                <table>
+                    <thead>
+                        <tr>
+                            <?php
+                            // Tomamos las claves (nombres de columna) del primer registro
+                            $headers = array_keys((array) $prestamos[0]);
+                            foreach ($headers as $header) {
+                                echo "<th>" . htmlspecialchars($header) . "</th>";
+                            }
+                            ?>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($prestamos as $prestamo): ?>
+                            <tr class="clickable-row" data-href="<?= BASE_URL ?>/prestamos/detalle?
+                        prenumero=<?= urlencode($prestamo->PreNumero) ?>&
+                        identidad=<?= urlencode($prestamo->ClNumID) ?>&
+                        fecha=<?= urlencode($prestamo->PreFecAprobacion) ?>&
+                        tab=busqueda-clientes">
+                                <?php foreach ((array) $prestamo as $campo => $valor): ?>
+                                    <td><?= htmlspecialchars($valor) ?></td>
+                                <?php endforeach; ?>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($prestamos as $prestamo): ?>
-                                <tr class="clickable-row"
-                                    data-href="<?= BASE_URL ?>/prestamos/detalle?prenumero=<?php echo urlencode($prestamo->PreNumero); ?>&identidad=<?php echo urlencode($prestamo->ClNumID); ?>&fecha=<?php echo urlencode($prestamo->PreFecAprobacion); ?>&tab=busqueda-clientes">
-                                    <td><?php echo htmlspecialchars($prestamo->ClReferencia); ?></td>
-                                    <td><?php echo htmlspecialchars($prestamo->PreNombre); ?></td>
-                                    <td><?php echo htmlspecialchars($prestamo->ClNumID); ?></td>
-                                    <td><?php echo htmlspecialchars($prestamo->PreNumero); ?></td>
-                                    <td><?php echo htmlspecialchars($prestamo->PreFecAprobacion); ?></td>
-                                    <td><?php echo htmlspecialchars($prestamo->PreSalCapital); ?></td>
-                                    <td><?php echo htmlspecialchars($prestamo->PreComentario); ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                <?php } else { ?>
-                    <p>No se encontraron resultados.</p>
-                <?php }
-            } ?>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php } else { ?>
+                <p>No se encontraron resultados.</p>
+            <?php } ?>
+
         </div>
 
     </div>
