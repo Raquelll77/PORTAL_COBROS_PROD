@@ -25,19 +25,23 @@
 </head>
 
 <body>
-    <div id="loftloader-wrapper">
-        <div class="loader-content">
-            <img src="<?= BASE_URL ?>/build/img/logoskg-transparente.png" alt="Logo SKG"
-                style="width:200px;height:auto;" />
-            <div class="spinner"></div>
+    <?php $hideChrome = $hideChrome ?? false;
+
+    if (!$hideChrome) { ?>
+        <div id="loftloader-wrapper">
+            <div class="loader-content">
+                <img src="<?= BASE_URL ?>/build/img/logoskg-transparente.png" alt="Logo SKG"
+                    style="width:200px;height:auto;" />
+                <div class="spinner"></div>
+            </div>
         </div>
-    </div>
+    <?php } ?>
 
     <?php
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
-    $hideChrome = $hideChrome ?? false; // viene del render del controlador
+    // viene del render del controlador
     ?>
 
     <?php if (!$hideChrome): ?>
@@ -68,8 +72,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.6);
-            /* 👈 sin fondo */
+            background: rgba(0, 0, 0, 0.4);
             z-index: 9999;
             display: flex;
             justify-content: center;
@@ -80,11 +83,8 @@
         #loftloader-wrapper .loader-content {
             display: flex;
             flex-direction: column;
-            /* 👈 coloca el spinner debajo */
             align-items: center;
         }
-
-
 
         /* Estilo del logo */
         #loftloader-wrapper img {
