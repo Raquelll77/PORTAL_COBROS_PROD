@@ -2,8 +2,8 @@
     <div class="contenedor-95">
         <h1 class="ui header">Subir creditos por gestor</h1>
 
-        <form id="upload-form" action="<?= BASE_URL ?>/configuracion/subir_creditos" 
-              method="post" enctype="multipart/form-data" class="ui form">
+        <form id="upload-form" action="<?= BASE_URL ?>/configuracion/subir_creditos" method="post"
+            enctype="multipart/form-data" class="ui form">
             <div class="field">
                 <label for="file">Selecciona el archivo Excel:</label>
                 <input type="file" name="file" id="file" accept=".xlsx, .xls, .csv" required>
@@ -67,6 +67,8 @@
                         <th>prenumero</th>
                         <th>usuarioCobros</th>
                         <th>nombregestor</th>
+                        <th>meta</th>
+                        <th>segmento</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -74,9 +76,11 @@
                         <td>01011001018781</td>
                         <td>CC0004</td>
                         <td>JUDIT</td>
+                        <td>10000</td>
+                        <td>VIGENTE</td>
                     </tr>
                     <tr>
-                        <td colspan="3" class="center aligned">← Escribe los datos aquí</td>
+                        <td colspan="5" class="center aligned">← Escribe los datos aquí</td>
                     </tr>
                 </tbody>
             </table>
