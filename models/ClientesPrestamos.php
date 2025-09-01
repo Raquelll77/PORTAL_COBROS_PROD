@@ -110,6 +110,18 @@ class ClientesPrestamos extends ActiveRecord
 
     }
 
+    public static function obtenerPagosDetalle($fechaInicial, $fechaFinal)
+    {
+
+        self::useSQLSrv();
+
+        $sql = "EXEC sp_ObtenerPagosDetalle @fechaInicial = ? , @fechaFinal = ?";
+        $params = [$fechaInicial, $fechaFinal];
+
+        return self::consultarSQL($sql, $params, true);
+
+    }
+
     public static function pagosXGestor($fechaInicial, $fechaFinal, $usuarioGestor)
     {
 

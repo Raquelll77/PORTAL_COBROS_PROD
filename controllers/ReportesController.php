@@ -205,7 +205,7 @@ class ReportesController
 
         // Consultar las gestiones en el rango de fechas
         ClientesPrestamos::useSQLSrv();
-        $pagos = ClientesPrestamos::obtenerPagosGeneral($fechaInicio, $fechaFin);
+        $pagos = ClientesPrestamos::obtenerPagosDetalle($fechaInicio, $fechaFin);
 
         if (empty($pagos)) {
             $errores[] = 'No hay pagos para el rango de fechas seleccionado.';
@@ -225,7 +225,10 @@ class ReportesController
             'A1' => 'Prenumero',
             'B1' => 'Nombre',
             'C1' => 'Pago',
-            'D1' => 'Gestor',
+            'D1' => 'Fecha de Pago',
+            'E1' => 'Fecha de Aplicacion',
+            'F1' => 'Gestor'
+
         ];
 
 
@@ -239,7 +242,10 @@ class ReportesController
             $sheet->setCellValue("A{$fila}", $pago['PreNumero'] ?? 'N/A');
             $sheet->setCellValue("B{$fila}", $pago['PreNombre'] ?? 'N/A');
             $sheet->setCellValue("C{$fila}", $pago['CrMoValor'] ?? 0);
-            $sheet->setCellValue("D{$fila}", $pago['usuarioCobros'] ?? 'Sin Asignar');
+            $sheet->setCellValue("D{$fila}", $pago['FechaValor'] ?? 'N/A');
+            $sheet->setCellValue("E{$fila}", $pago['FechaTransaccion'] ?? 'N/A');
+            $sheet->setCellValue("F{$fila}", $pago['usuarioCobros'] ?? 'Sin Asignar');
+
             $fila++;
         }
 
