@@ -77,7 +77,7 @@
                     </p>
 
                     <p>
-                        <strong>Portada del Expediente:</strong>
+                        <strong>Portada:</strong>
                         <?php if (!empty($detalle['doc_portada'])): ?>
                             <a href="<?= $baseRuta . htmlspecialchars($detalle['doc_portada']) ?>" target="_blank">
                                 Ver Documento
