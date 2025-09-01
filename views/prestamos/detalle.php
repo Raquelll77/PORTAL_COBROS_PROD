@@ -1,6 +1,8 @@
 <div class="contenedor">
     <?php
     $prenumero = htmlspecialchars($_GET['prenumero']);
+    $baseRuta = "http://web.skgcredit.com:9100/doctos/";
+
     ?>
 
     <div id="frm-envio-datos" class="contenedor-95">
@@ -47,6 +49,65 @@
                     <p><strong>Direccion de trabajo:</strong>
                         <?php echo htmlspecialchars($detalle['empresa_direccion']); ?></p>
 
+                </div>
+
+                <h3>📂 Expediente del Cliente</h3>
+                <hr>
+                <div class="contenido-detalle">
+                    <p>
+                        <strong>Foto del Cliente:</strong>
+                        <?php if (!empty($detalle['doc_foto_persona'])): ?>
+                            <a href="<?= $baseRuta . htmlspecialchars($detalle['doc_foto_persona']) ?>" target="_blank">
+                                Ver Documento
+                            </a>
+                        <?php else: ?>
+                            <span style="color: #777;">No disponible</span>
+                        <?php endif; ?>
+                    </p>
+
+                    <p>
+                        <strong>Contrato:</strong>
+                        <?php if (!empty($detalle['doc_contrato'])): ?>
+                            <a href="<?= $baseRuta . htmlspecialchars($detalle['doc_contrato']) ?>" target="_blank">
+                                Ver Documento
+                            </a>
+                        <?php else: ?>
+                            <span style="color: #777;">No disponible</span>
+                        <?php endif; ?>
+                    </p>
+
+                    <p>
+                        <strong>Portada del Expediente:</strong>
+                        <?php if (!empty($detalle['doc_portada'])): ?>
+                            <a href="<?= $baseRuta . htmlspecialchars($detalle['doc_portada']) ?>" target="_blank">
+                                Ver Documento
+                            </a>
+                        <?php else: ?>
+                            <span style="color: #777;">No disponible</span>
+                        <?php endif; ?>
+                    </p>
+
+                    <p>
+                        <strong>Foto de Identidad:</strong>
+                        <?php if (!empty($detalle['doc_identidad'])): ?>
+                            <a href="<?= $baseRuta . htmlspecialchars($detalle['doc_identidad']) ?>" target="_blank">
+                                Ver Documento
+                            </a>
+                        <?php else: ?>
+                            <span style="color: #777;">No disponible</span>
+                        <?php endif; ?>
+                    </p>
+
+                    <p>
+                        <strong>Croquis de Domicilio:</strong>
+                        <?php if (!empty($detalle['doc_croquis'])): ?>
+                            <a href="<?= $baseRuta . htmlspecialchars($detalle['doc_croquis']) ?>" target="_blank">
+                                Ver Documento
+                            </a>
+                        <?php else: ?>
+                            <span style="color: #777;">No disponible</span>
+                        <?php endif; ?>
+                    </p>
                 </div>
 
                 <h3>Informacion de producto</h3>
