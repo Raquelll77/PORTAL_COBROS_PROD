@@ -93,6 +93,7 @@
                         <th>Comentario</th>
                         <th>Cod Resultado</th>
                         <th>Fecha Revisión</th>
+                        <th>Meta</th>
                         <th>Pagos</th>
                         <th>Atraso</th>
                         <th>Cuotas Atraso</th>
@@ -150,10 +151,11 @@
             { data: "ClNumID", title: "Identidad", defaultContent: "" },
             { data: "PreNumero", title: "PreNúmero", defaultContent: "" },
             { data: "PreFecAprobacion", title: "Fecha de Aprobación", defaultContent: "" },
-            { data: "PreSalCapital", title: "Estatus", defaultContent: "" },
+            { data: "segmento", title: "Segmento", defaultContent: "" },
             { data: "PreComentario", title: "Comentario", defaultContent: "" },
             { data: "codigo_resultado", title: "Cod Resultado", defaultContent: "" },
             { data: "fecha_revision", title: "Fecha Revisión", defaultContent: "" },
+            { data: "meta", title: "Meta", defaultContent: "" },
             { data: "total_pagos_mes_actual", title: "Pagos", defaultContent: "" },
             { data: "MaxDiasAtraso", title: "Atraso", defaultContent: "" },
             { data: "CuotasEnAtraso", title: "Cuotas Atraso", defaultContent: "" },
