@@ -120,7 +120,7 @@ p {
 
 #clientes-asignados {
     .tabla-contenedor {
-        max-height: 600px; // Altura máxima con scroll vertical
+        max-height: 1000px; // Altura máxima con scroll vertical
         overflow-y: auto; // Habilita scroll vertical
         overflow-x: auto; // Habilita scroll horizontal solo si es necesario
         margin-bottom: 2rem; // Espaciado inferior

@@ -105,6 +105,10 @@
                 </tbody>
             </table>
         </div>
+
+
+        <div id="resumen-segmentos" class="ui three stackable statistics"></div>
+
     </div>
 
 
@@ -141,7 +145,7 @@
                 return json.data;
             }
         },
-        pageLength: 25,
+        pageLength: 20,
         scrollX: true,
         autoWidth: false,
         deferRender: true,
@@ -250,6 +254,46 @@
                 document.getElementById(targetTab).classList.add('active');
             });
         });
+    });
+
+
+    tablaAsignados.on('draw', function () {
+        const data = tablaAsignados.rows({ search: 'applied' }).data().toArray();
+
+        const resumen = {};
+        data.forEach(row => {
+            const seg = row.segmento || 'Sin segmento';
+            if (!resumen[seg]) {
+                resumen[seg] = { meta: 0, pagos: 0 };
+            }
+            resumen[seg].meta += parseFloat(row.meta || 0);
+            resumen[seg].pagos += parseFloat(row.total_pagos_mes_actual || 0);
+        });
+
+        let html = "";
+        for (const seg in resumen) {
+            const meta = resumen[seg].meta;
+            const pagos = resumen[seg].pagos;
+            const cumplimiento = meta > 0 ? ((pagos / meta) * 100).toFixed(2) : 0;
+
+            // Color dinámico según cumplimiento
+            let colorClass = "red";
+            if (cumplimiento >= 80) colorClass = "green";
+            else if (cumplimiento >= 50) colorClass = "yellow";
+
+            html += `
+            <div class="statistic ${colorClass}">
+                <div class="value">${cumplimiento}%</div>
+                <div class="label">
+                    <strong>${seg}</strong><br>
+                    Meta: L ${meta.toLocaleString()}<br>
+                    Pagos: L ${pagos.toLocaleString()}
+                </div>
+            </div>
+        `;
+        }
+
+        document.getElementById("resumen-segmentos").innerHTML = html;
     });
 
 
