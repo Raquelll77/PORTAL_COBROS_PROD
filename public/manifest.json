@@ -1,0 +1,17 @@
+{
+    "short_name": "COBROS",
+    "name" : "PORTAL - COBROS",
+    "icons" : [
+        {
+            "src": "/build/img/logoskg.jpg",
+            "sizes" : "192x192",
+            "type" : "image/jpeg"
+        }
+    ],
+    "start_url":"/",
+    "display" : "standalone", 
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff",
+    "orientation" : "portrait",
+    "categories" : ["business"]
+}

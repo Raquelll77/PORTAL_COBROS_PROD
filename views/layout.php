@@ -16,6 +16,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="<?= BASE_URL ?>/build/img/logoskg.jpg">
     <link rel="icon" type="image/png" sizes="32x32" href="<?= BASE_URL ?>/build/img/logoskg.jpg">
     <link rel="icon" type="image/png" sizes="16x16" href="<?= BASE_URL ?>/build/img/logoskg.jpg">
+    <link rel="manifest" href="<?= BASE_URL ?>/manifest.json">
 
 
 
@@ -26,6 +27,7 @@
 
 <body>
     <?php $hideChrome = $hideChrome ?? false;
+    $hideLoader = isset($_POST['skip_loader']) && $_POST['skip_loader'] == "1";
 
     if (!$hideChrome) { ?>
         <div id="loftloader-wrapper" style="
@@ -124,39 +126,43 @@
         }
     </style>
 
-
     <script>
-        // Inicialización global segura
-        $(function () {
-            $('.ui.dropdown').dropdown();
-            $('.ui.checkbox').checkbox();
-        });
-    </script>
+        window.skipLoader = false;
 
-    <?php if (!$hideChrome): ?>
-        <?php include __DIR__ . '/principal/footer-dashboard.php'; ?>
-    <?php endif; ?>
+        // Detectar cuando se envía un form POST
+        document.addEventListener("submit", function (e) {
+            const form = e.target;
+            if (form.method && form.method.toLowerCase() === "post") {
+                // 🚩 marcar que es POST => no mostrar loader
+                window.skipLoader = true;
+            }
+        }, true);
 
-    <script>
-        // Ocultar loader cuando la página haya cargado
-        $(window).on('load pageshow', function () {
-            $("#loftloader-wrapper").addClass("hidden").one("transitionend", function () {
-                $("body").css("overflow", "auto");
-            });
-        });
+        // Cuando la página carga o se vuelve a mostrar
+        $(window).on('load pageshow', function (e) {
+            $("#loftloader-wrapper").hide();
+            $("body").css("overflow", "auto");
 
-        // Mostrar loader antes de salir/navegar
-        $(window).on('beforeunload pagehide', function (e) {
             if (e.persisted) {
                 location.reload();
-            } else {
-                $("#loftloader-wrapper").removeClass("hidden");
-                $("body").css("overflow", "hidden");
             }
         });
 
+        // Antes de salir/navegar
+        $(window).on('beforeunload pagehide', function (e) {
+            if (window.skipLoader) {
+                window.skipLoader = false; // resetear para la próxima
+                return; // 🚫 no mostrar loader en POST
+            }
 
+            $("#loftloader-wrapper").show();
+            $("body").css("overflow", "hidden");
+        });
     </script>
+
+
+
+
 
 
 </body>
