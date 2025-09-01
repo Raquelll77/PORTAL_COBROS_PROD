@@ -301,8 +301,8 @@
             <h2>Historial de Gestiones</h2>
             <div class="scrollable-gestiones">
 
-                <?php if (!empty($historialGestiones) && is_iterable($historialGestiones)) { ?>
-                    <div class="historial-gestion-cards">
+                <div class="historial-gestion-cards">
+                    <?php if (!empty($historialGestiones) && is_iterable($historialGestiones)) { ?>
                         <?php foreach ($historialGestiones as $gestion): ?>
                             <div class="gestion-card">
                                 <div class="encabezado-gestion">
@@ -321,24 +321,22 @@
                                     <p><strong>Fecha de Revisión:</strong>
                                         <?= htmlspecialchars($gestion->fecha_revision); ?>
                                     </p>
-
-                                    <!-- Si el código de la gestión es positivo, mostrar fecha de promesa -->
                                     <?php if (in_array($gestion->codigo_resultado, $codigosPositivosArray)): ?>
                                         <p><strong>Fecha de Promesa:</strong>
                                             <?= htmlspecialchars($gestion->fecha_promesa); ?>
                                         </p>
                                     <?php endif; ?>
-
                                     <p class="nombre-gestor">
                                         Creado por: <?= htmlspecialchars($gestion->creado_por); ?>
                                     </p>
                                 </div>
                             </div>
                         <?php endforeach; ?>
-                    </div> <!-- cierre correcto de .historial-gestion-cards -->
-                <?php } else { ?>
-                    <p>No hay gestiones registradas para este préstamo.</p>
-                <?php } ?>
+                    <?php } else { ?>
+                        <p>No hay gestiones registradas para este préstamo.</p>
+                    <?php } ?>
+                </div>
+
 
             </div> <!-- cierre de .scrollable-gestiones -->
         </div> <!-- cierre de .tab-content -->
