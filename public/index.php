@@ -48,6 +48,7 @@ $router->get('/reportes-recuperacion', [ReportesController::class, 'recuperacion
 $router->post('/reportes-recuperacion', [ReportesController::class, 'descargarPagos'], ['ADMIN', 'SUPERVISOR']);
 $router->get('/reportes-deterioro', [ReportesController::class, 'deterioro'], ['ADMIN', 'SUPERVISOR']);
 $router->post('/reportes-deterioro', [ReportesController::class, 'descargarReporteDeterioro'], ['ADMIN', 'SUPERVISOR']);
+$router->get('/reportes-asignacion', [ReportesController::class, 'asignacionCartera'], ['ADMIN', 'SUPERVISOR']);
 
 
 

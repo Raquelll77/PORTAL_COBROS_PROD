@@ -3,6 +3,7 @@
 namespace Controllers;
 
 use Model\ClientesPrestamos;
+use Model\PrestamosXGestor;
 use MVC\Router;
 use Model\Gestiones;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -359,6 +360,28 @@ class ReportesController
             http_response_code(500);
             echo json_encode(['error' => 'No se pudo generar el reporte.']);
         }
+    }
+
+    public static function asignacionCartera(Router $router)
+    {
+        isAuth();
+
+        $asignacion = new PrestamosXGestor();
+
+        PrestamosXGestor::useSQLSrv();
+
+        $prestamosXGestor = PrestamosXGestor::all();
+
+
+        $router->render(
+            'reportes/asignacionCartera',
+            [
+                'titulo' => 'Asignacion Cartera',
+                'prestamoXGestor' => $prestamosXGestor
+            ]
+
+        );
+
     }
 
 

@@ -15,4 +15,9 @@
         <img src="<?= BASE_URL ?>/build/img/gestion.png" alt="cartera-gestion">
         <p class="texto-contenido">Deterioro de Cartera</p>
     </a>
+
+    <a href="<?= BASE_URL ?>/reportes-asignacion" class="contenido-seccion">
+        <img src="<?= BASE_URL ?>/build/img/cateraAsignacion.png" alt="cartera-asignacion">
+        <p class="texto-contenido">Asignacion de Cartera</p>
+    </a>
 </main>
