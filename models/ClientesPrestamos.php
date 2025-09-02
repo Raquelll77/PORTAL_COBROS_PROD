@@ -26,26 +26,33 @@ class ClientesPrestamos extends ActiveRecord
     {
         self::useSQLSrv2();
 
-        $sql = "SELECT ClReferencia AS ClReferencia, PreNombre AS PreNombre, ClNumID AS ClNumID, 
-            cp.PreNumero AS PreNumero, FORMAT(PreFecAprobacion, 'dd-MM-yyyy') AS PreFecAprobacion,
-            CASE WHEN PreSalCapital = 0 THEN 'Cancelado' ELSE 'Vigente' END AS PreSalCapital, 
-            PreComentario AS PreComentario, pg.nombregestor
-            FROM " . static::$tabla . " as cp
-            INNER JOIN SIFCO.ClClientes as cc ON cp.PreCliCod = cc.ClCliCod
-			LEFT JOIN [192.168.1.3].MOVESAWEB.dbo.prestamosGestor as pg on pg.prenumero = cp.PreNumero
+        $sql = "SELECT 
+                ClReferencia AS ClReferencia, 
+                cp.PreNombre AS PreNombre, 
+                cc.ClNumID AS ClNumID, 
+                cp.PreNumero AS PreNumero, 
+                FORMAT(cp.PreFecAprobacion, 'dd-MM-yyyy') AS PreFecAprobacion,
+                CASE WHEN cp.PreSalCapital = 0 THEN 'Cancelado' ELSE 'Vigente' END AS PreSalCapital, 
+                cp.PreComentario AS PreComentario, 
+                pg.nombregestor
+            FROM " . static::$tabla . " AS cp
+            INNER JOIN SIFCO.ClClientes AS cc 
+                ON cp.PreCliCod = cc.ClCliCod
+            LEFT JOIN [192.168.1.3].MOVESAWEB.dbo.prestamosGestor AS pg 
+                ON pg.prenumero = cp.PreNumero
             WHERE 1=1";
 
         $params = [];
         if ($dni) {
-            $sql .= " AND ClNumID = :dni";
+            $sql .= " AND cc.ClNumID = :dni";
             $params[':dni'] = $dni;
         }
         if ($nombre) {
-            $sql .= " AND PreNombre LIKE :nombre";
+            $sql .= " AND cp.PreNombre LIKE :nombre";
             $params[':nombre'] = '%' . $nombre . '%';
         }
         if ($prenumero) {
-            $sql .= " AND PreNumero = :prenumero";
+            $sql .= " AND cp.PreNumero = :prenumero";
             $params[':prenumero'] = $prenumero;
         }
 
