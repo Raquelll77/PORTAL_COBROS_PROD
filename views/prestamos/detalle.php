@@ -108,6 +108,17 @@
                             <span style="color: #777;">No disponible</span>
                         <?php endif; ?>
                     </p>
+
+                    <p>
+                        <strong>Recibos Publicos:</strong>
+                        <?php if (!empty($detalle['doc_recibo'])): ?>
+                            <a href="<?= $baseRuta . htmlspecialchars($detalle['doc_recibo']) ?>" target="_blank">
+                                Ver Documento
+                            </a>
+                        <?php else: ?>
+                            <span style="color: #777;">No disponible</span>
+                        <?php endif; ?>
+                    </p>
                 </div>
 
                 <h3>Informacion de producto</h3>

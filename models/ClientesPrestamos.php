@@ -27,11 +27,12 @@ class ClientesPrestamos extends ActiveRecord
         self::useSQLSrv2();
 
         $sql = "SELECT ClReferencia AS ClReferencia, PreNombre AS PreNombre, ClNumID AS ClNumID, 
-            PreNumero AS PreNumero, FORMAT(PreFecAprobacion, 'dd-MM-yyyy') AS PreFecAprobacion,
+            cp.PreNumero AS PreNumero, FORMAT(PreFecAprobacion, 'dd-MM-yyyy') AS PreFecAprobacion,
             CASE WHEN PreSalCapital = 0 THEN 'Cancelado' ELSE 'Vigente' END AS PreSalCapital, 
-            PreComentario AS PreComentario
+            PreComentario AS PreComentario, pg.nombregestor
             FROM " . static::$tabla . " as cp
             INNER JOIN SIFCO.ClClientes as cc ON cp.PreCliCod = cc.ClCliCod
+			LEFT JOIN [192.168.1.3].MOVESAWEB.dbo.prestamosGestor as pg on pg.prenumero = cp.PreNumero
             WHERE 1=1";
 
         $params = [];
