@@ -42,11 +42,11 @@ class Upload
                 continue; // Saltar encabezado
             }
 
-            $prenumero = $row['A'] ?? null;
-            $usuarioCobros = $row['B'] ?? null;
-            $nombreGestor = $row['C'] ?? null;
-            $meta = $row['D'] ?? null;
-            $segmento = $row['E'] ?? null;
+            $prenumero = trim($row['A'] ?? '');
+            $usuarioCobros = trim($row['B'] ?? '');
+            $nombreGestor = trim($row['C'] ?? '');
+            $meta = trim($row['D'] ?? '');
+            $segmento = trim($row['E'] ?? '');
 
             if ($prenumero && $usuarioCobros && $nombreGestor) {
                 $batch[] = [
@@ -57,7 +57,6 @@ class Upload
                     ':segmento' => $segmento,
                 ];
             }
-
 
             if (count($batch) >= $batchSize) {
                 $insertedRows += $this->insertBatch($batch);
@@ -76,59 +75,40 @@ class Upload
             unlink($this->progressFile);
         }
 
-        // Devolver solo el número de filas insertadas
         return $insertedRows;
     }
-
 
     protected function insertBatch($batch)
     {
         try {
             $this->db->beginTransaction();
 
-            // Construir placeholders dinámicos
-            $values = [];
-            $params = [];
-            $i = 0;
-
-            foreach ($batch as $row) {
-                $i++;
-                $values[] = "(:prenumero{$i}, :usuarioCobros{$i}, :nombregestor{$i}, :meta{$i}, :segmento{$i})";
-
-                $params[":prenumero{$i}"] = $row[':prenumero'];
-                $params[":usuarioCobros{$i}"] = $row[':usuarioCobros'];
-                $params[":nombregestor{$i}"] = $row[':nombregestor'];
-                $params[":meta{$i}"] = $row[':meta'];
-                $params[":segmento{$i}"] = $row[':segmento'];
-            }
-
-            $valuesSql = implode(", ", $values);
-
             $query = "
-            MERGE prestamosGestor AS target
-            USING (VALUES $valuesSql) 
-            AS source (prenumero, usuarioCobros, nombregestor, meta, segmento)
-            ON target.prenumero = source.prenumero
-            WHEN MATCHED THEN
-                UPDATE SET usuarioCobros = source.usuarioCobros, 
-                           nombregestor  = source.nombregestor,
-                           meta          = source.meta,
-                           segmento      = source.segmento
-            WHEN NOT MATCHED THEN
-                INSERT (prenumero, usuarioCobros, nombregestor, meta, segmento)
-                VALUES (source.prenumero, source.usuarioCobros, source.nombregestor, source.meta, source.segmento);";
+                MERGE prestamosGestor AS target
+                USING (VALUES (:prenumero, :usuarioCobros, :nombregestor, :meta, :segmento)) 
+                AS source (prenumero, usuarioCobros, nombregestor, meta, segmento)
+                ON target.prenumero = source.prenumero
+                WHEN MATCHED THEN
+                    UPDATE SET usuarioCobros = source.usuarioCobros, 
+                               nombregestor = source.nombregestor,
+                               meta = source.meta,
+                               segmento = source.segmento
+                WHEN NOT MATCHED THEN
+                    INSERT (prenumero, usuarioCobros, nombregestor, meta, segmento)
+                    VALUES (source.prenumero, source.usuarioCobros, source.nombregestor, source.meta, source.segmento);";
 
             $stmt = $this->db->prepare($query);
-            $stmt->execute($params);
+
+            foreach ($batch as $params) {
+                $stmt->execute($params);
+            }
 
             $this->db->commit();
             return count($batch);
-
         } catch (\Exception $e) {
             $this->db->rollBack();
             error_log("Error en la transacción: " . $e->getMessage());
             return 0;
         }
     }
-
 }
