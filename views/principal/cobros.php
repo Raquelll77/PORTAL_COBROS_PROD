@@ -138,6 +138,7 @@
     var tablaAsignados = $('#clientes-asignados-table').DataTable({
         processing: true,
         serverSide: false,
+        stateSave: true,
         ajax: {
             url: "<?= BASE_URL ?>/cobros/listar-asignados",
             dataSrc: function (json) {
