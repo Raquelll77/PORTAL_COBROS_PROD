@@ -30,11 +30,12 @@ class LoginController
                         // Comparar contraseña (plain por ahora)
                         if (($_POST['password'] ?? '') === (string) $usuario->password) {
                             session_start();
-                            $_SESSION['id'] = $usuario->id;
-                            $_SESSION['nombre'] = $usuario->nombre;
-                            $_SESSION['usuario'] = $usuario->usuario;
-                            $_SESSION['rol'] = $usuario->rol;
-                            $_SESSION['login'] = true;
+                            $_SESSION['PORTAL_COBROS'] = [];
+                            $_SESSION['PORTAL_COBROS']['id'] = $usuario->id;
+                            $_SESSION['PORTAL_COBROS']['nombre'] = $usuario->nombre;
+                            $_SESSION['PORTAL_COBROS']['usuario'] = $usuario->usuario;
+                            $_SESSION['PORTAL_COBROS']['rol'] = $usuario->rol;
+                            $_SESSION['PORTAL_COBROS']['login'] = true;
 
                             if ($usuario->rol === 'TELECOBRO') {
                                 header('Location: ' . BASE_URL . '/cobros');
@@ -64,7 +65,7 @@ class LoginController
     {
         // Cerrar la sesión
         session_start();
-        $_SESSION = [];
+        $_SESSION['PORTAL_COBROS'] = [];
         header('Location: ' . BASE_URL . '/');
     }
 }

@@ -21,7 +21,7 @@ class PrestamoController
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['codigoResultado'])) {
             $params = $_POST;
 
-            if (empty($params['prenumero']) || empty($_SESSION['nombre'])) {
+            if (empty($params['prenumero']) || empty($_SESSION['PORTAL_COBROS']['nombre'])) {
                 header('Content-Type: application/json');
                 echo json_encode([
                     'status' => 'error',
@@ -47,7 +47,7 @@ class PrestamoController
                 'fecha_promesa' => $fecha_promesa,
                 'numero_contactado' => $params['numeroContactado'],
                 'comentario' => $params['comentarioGestion'] ?? '',
-                'creado_por' => $_SESSION['nombre'],
+                'creado_por' => $_SESSION['PORTAL_COBROS']['nombre'],
                 'monto_promesa' => $monto_promesa
 
             ];
@@ -161,7 +161,7 @@ class PrestamoController
         $prenumero = $_POST['prenumero'];
         $direccion = $_POST['direccion_visitada'];
         $fecha = $_POST['fecha_visita'];
-        $creado_por = $_SESSION['nombre'] ?? 'Desconocido';
+        $creado_por = $_SESSION['PORTAL_COBROS']['nombre'] ?? 'Desconocido';
 
         // 🚨 Ruta absoluta hacia /public/uploads/visitas
         $upload_dir = __DIR__ . '/../public/uploads/visitas/';
@@ -246,7 +246,7 @@ class PrestamoController
             'nombre' => $_POST['nombre'] ?? '',
             'relacion' => $_POST['relacion'] ?? '',
             'celular' => $_POST['celular'] ?? '',
-            'creado_por' => $_SESSION['nombre'] ?? 'Sistema',
+            'creado_por' => $_SESSION['PORTAL_COBROS']['nombre'] ?? 'Sistema',
         ]);
 
         if ($referencia->guardar()) {

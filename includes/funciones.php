@@ -18,7 +18,7 @@ function s($html): string
 // Función que revisa que el usuario este autenticado
 function isAuth(): void
 {
-    if (!isset($_SESSION['login'])) {
+    if (!isset($_SESSION['PORTAL_COBROS']['login'])) {
         // Detectar si es una petición AJAX o fetch()
         $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
         $acceptsJson = strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false;
@@ -38,6 +38,7 @@ function isAuth(): void
     }
 }
 
-function url($path = '') {
+function url($path = '')
+{
     return rtrim(BASE_URL, '/') . '/' . ltrim($path, '/');
 }

@@ -17,7 +17,7 @@ $menuOpciones = [
 ];
 
 // Obtener el rol actual del usuario
-$rolUsuario = $_SESSION['rol'] ?? 'INVITADO';
+$rolUsuario = $_SESSION['PORTAL_COBROS']['rol'] ?? 'INVITADO';
 
 // Determinar qué opciones del menú mostrar según el rol
 $opcionesMostrar = $menuOpciones[$rolUsuario] ?? [];

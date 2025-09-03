@@ -29,7 +29,7 @@ class PrincipalController
 
         // Solo cargar clientes asignados si se abre esa pestaña
         if ($tab === 'clientes-asignados') {
-            $prestamoXGestor = ClientesPrestamos::obtenerPrestamosPorGestor($_SESSION['usuario']);
+            $prestamoXGestor = ClientesPrestamos::obtenerPrestamosPorGestor($_SESSION['PORTAL_COBROS']['usuario']);
         }
 
         // Si es búsqueda de clientes
@@ -53,7 +53,7 @@ class PrincipalController
     {
         isAuth();
 
-        $prestamoXGestor = ClientesPrestamos::obtenerPrestamosPorGestor($_SESSION['usuario']);
+        $prestamoXGestor = ClientesPrestamos::obtenerPrestamosPorGestor($_SESSION['PORTAL_COBROS']['usuario']);
 
         $data = array_map(function ($item) {
             $fila = (array) $item;

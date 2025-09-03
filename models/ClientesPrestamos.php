@@ -99,7 +99,7 @@ class ClientesPrestamos extends ActiveRecord
 
         self::useSQLSrv();
 
-        $sql = "EXEC [spObtenerPrestamos] @usuarioCobros = ? ";
+        $sql = "EXEC spObtenerPrestamosOptimizado @usuarioCobros = ? ";
         $params = [$usuario];
 
         return self::consultarSQL($sql, $params, true);
