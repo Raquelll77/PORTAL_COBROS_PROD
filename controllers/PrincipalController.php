@@ -33,13 +33,21 @@ class PrincipalController
         }
 
         // Si es búsqueda de clientes
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' and $tab === 'busqueda-clientes') {
             $identidad = $_POST['identidad'] ?? null;
             $nombre = $_POST['nombre'] ?? null;
             $prenumero = $_POST['prenumero'] ?? null;
 
+            // Ejecutar búsqueda
             $prestamos = ClientesPrestamos::buscarCreditosClientes($identidad, $nombre, $prenumero);
+
+            // Guardar resultado en sesión
+            $_SESSION['PORTAL_COBROS']['ultimos_prestamos'] = $prestamos;
+        } else {
+            // Recuperar último resultado si existe
+            $prestamos = $_SESSION['PORTAL_COBROS']['ultimos_prestamos'] ?? [];
         }
+
 
         $router->render('principal/cobros', [
             'titulo' => 'Cobros',
