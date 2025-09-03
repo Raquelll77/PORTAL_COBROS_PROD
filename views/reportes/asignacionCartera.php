@@ -58,6 +58,96 @@
             </tbody>
         </table>
     </div>
+    <div class="contenedor-95">
+        <h2 class="ui header">Cumplimiento Meta por Segmento</h2>
+
+        <?php
+        // Agrupar por gestor
+        $gestores = [];
+        foreach ($prestamosRecuperacion as $row) {
+            $gestor = $row['nombregestor'] ?? 'Sin Gestor';
+            $seg = $row['segmento'] ?? 'Sin segmento';
+
+            if (!isset($gestores[$gestor])) {
+                $gestores[$gestor] = [
+                    'meta' => 0,
+                    'pagos' => 0,
+                    'segmentos' => []
+                ];
+            }
+
+            $meta = (float) ($row['meta'] ?? 0);
+            $pagos = (float) ($row['total_pagos_mes_actual'] ?? 0);
+
+            $gestores[$gestor]['meta'] += $meta;
+            $gestores[$gestor]['pagos'] += $pagos;
+
+            if (!isset($gestores[$gestor]['segmentos'][$seg])) {
+                $gestores[$gestor]['segmentos'][$seg] = [
+                    'meta' => 0,
+                    'pagos' => 0
+                ];
+            }
+
+            $gestores[$gestor]['segmentos'][$seg]['meta'] += $meta;
+            $gestores[$gestor]['segmentos'][$seg]['pagos'] += $pagos;
+        }
+        ?>
+
+        <?php foreach ($gestores as $gestor => $info): ?>
+            <?php
+            $cumplimientoGestor = $info['meta'] > 0
+                ? round(($info['pagos'] / $info['meta']) * 100, 2)
+                : 0;
+
+            $color = "red";
+            if ($cumplimientoGestor >= 80)
+                $color = "green";
+            elseif ($cumplimientoGestor >= 50)
+                $color = "yellow";
+            ?>
+
+            <div class="ui segment">
+                <h3 class="ui header">
+                    <?= $gestor ?>
+                    <div class="ui label <?= $color ?>">
+                        <?= $cumplimientoGestor ?> %
+                    </div>
+                </h3>
+                <h4>
+                    <strong>Meta:</strong> L <?= number_format($info['meta'], 2) ?><br>
+                    <strong>Pagos:</strong> L <?= number_format($info['pagos'], 2) ?>
+                </h4>
+
+                <table class="ui celled table small">
+                    <thead>
+                        <tr>
+                            <th>Segmento</th>
+                            <th>Meta</th>
+                            <th>Pagos</th>
+                            <th>Cumplimiento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($info['segmentos'] as $seg => $datos): ?>
+                            <?php
+                            $cumpl = $datos['meta'] > 0
+                                ? round(($datos['pagos'] / $datos['meta']) * 100, 2)
+                                : 0;
+                            ?>
+                            <tr>
+                                <td><?= $seg ?></td>
+                                <td>L <?= number_format($datos['meta'], 2) ?></td>
+                                <td>L <?= number_format($datos['pagos'], 2) ?></td>
+                                <td><?= $cumpl ?> %</td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
 </div>
 
 <!-- Estilos DataTable -->

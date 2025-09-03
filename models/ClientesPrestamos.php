@@ -315,6 +315,13 @@ class ClientesPrestamos extends ActiveRecord
         return self::consultarSQL($sql, $params, true);
     }
 
+    public static function obtenerPrestamosGeneral()
+    {
+        self::useSQLSrv();
+        $sql = "EXEC spObtenerPrestamosGeneral";
+        return self::consultarSQL($sql, null, true);
+    }
+
 
 
 

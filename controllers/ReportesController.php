@@ -371,19 +371,18 @@ class ReportesController
         PrestamosXGestor::useSQLSrv();
 
         $prestamosXGestor = PrestamosXGestor::all();
+        $prestamosRecuperacion = ClientesPrestamos::obtenerPrestamosGeneral();
 
 
         $router->render(
             'reportes/asignacionCartera',
             [
                 'titulo' => 'Asignacion Cartera',
-                'prestamoXGestor' => $prestamosXGestor
+                'prestamoXGestor' => $prestamosXGestor,
+                'prestamosRecuperacion' => $prestamosRecuperacion
             ]
 
         );
-
     }
-
-
 
 }
