@@ -61,12 +61,21 @@ class PrincipalController
     {
         isAuth();
 
-        $prestamoXGestor = ClientesPrestamos::obtenerPrestamosPorGestor($_SESSION['PORTAL_COBROS']['usuario']);
+        $rol = $_SESSION['PORTAL_COBROS']['rol'] ?? '';
+        $usuario = $_SESSION['PORTAL_COBROS']['usuario'] ?? '';
 
-        $data = array_map(function ($item) {
+        if ($rol === 'TELECOBRO') {
+            // Solo los préstamos asignados a este gestor
+            $prestamos = ClientesPrestamos::obtenerPrestamosPorGestor($usuario);
+        } else {
+            // Todos los préstamos (general, incluye nombregestor)
+            $prestamos = ClientesPrestamos::obtenerPrestamosGeneral();
+        }
+
+        $data = array_map(function ($item) use ($rol) {
             $fila = (array) $item;
 
-            return [
+            $base = [
                 "ClReferencia" => mb_convert_encoding($fila['ClReferencia'] ?? '', 'UTF-8', 'auto'),
                 "PreNombre" => mb_convert_encoding($fila['PreNombre'] ?? '', 'UTF-8', 'auto'),
                 "ClNumID" => mb_convert_encoding($fila['ClNumID'] ?? '', 'UTF-8', 'auto'),
@@ -74,6 +83,8 @@ class PrincipalController
                 "PreFecAprobacion" => mb_convert_encoding($fila['PreFecAprobacion'] ?? '', 'UTF-8', 'auto'),
                 "segmento" => mb_convert_encoding($fila['segmento'] ?? '', 'UTF-8', 'auto'),
                 "PreComentario" => mb_convert_encoding($fila['PreComentario'] ?? '', 'UTF-8', 'auto'),
+                "Departamento" => mb_convert_encoding($fila['Departamento'] ?? '', 'UTF-8', 'auto'),
+                "Municipio" => mb_convert_encoding($fila['Municipio'] ?? '', 'UTF-8', 'auto'),
                 "codigo_resultado" => mb_convert_encoding($fila['codigo_resultado'] ?? '', 'UTF-8', 'auto'),
                 "fecha_revision" => mb_convert_encoding($fila['fecha_revision'] ?? '', 'UTF-8', 'auto'),
                 "meta" => $fila['meta'] ?? 0,
@@ -82,12 +93,20 @@ class PrincipalController
                 "CuotasEnAtraso" => $fila['CuotasEnAtraso'] ?? '',
                 "DiaPagoCuota" => $fila['DiaPagoCuota'] ?? ''
             ];
-        }, $prestamoXGestor);
+
+            // Solo en el general existe nombregestor
+            if (isset($fila['nombregestor'])) {
+                $base["nombregestor"] = mb_convert_encoding($fila['nombregestor'] ?? '', 'UTF-8', 'auto');
+            }
+
+            return $base;
+        }, $prestamos);
 
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['data' => $data], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         exit;
     }
+
 
 
 

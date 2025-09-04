@@ -91,6 +91,8 @@
                         <th>Fecha de Aprobación</th>
                         <th>Estatus</th>
                         <th>Comentario</th>
+                        <th>Departamento</th>
+                        <th>Municipio</th>
                         <th>Cod Resultado</th>
                         <th>Fecha Revisión</th>
                         <th>Meta</th>
@@ -98,6 +100,9 @@
                         <th>Atraso</th>
                         <th>Cuotas Atraso</th>
                         <th>Fecha de Pago</th>
+                        <?php if ($_SESSION['PORTAL_COBROS']['rol'] !== 'TELECOBRO') { ?>
+                            <th>Gestor</th>
+                        <?php } ?>
                     </tr>
                 </thead>
                 <tbody>
@@ -158,6 +163,8 @@
             { data: "PreFecAprobacion", title: "Fecha de Aprobación", defaultContent: "" },
             { data: "segmento", title: "Segmento", defaultContent: "" },
             { data: "PreComentario", title: "Comentario", defaultContent: "" },
+            { data: "Departamento", title: "Departamento", defaultContent: "" },
+            { data: "Municipio", title: "Municipio", defaultContent: "" },
             { data: "codigo_resultado", title: "Cod Resultado", defaultContent: "" },
             { data: "fecha_revision", title: "Fecha Revisión", defaultContent: "" },
             { data: "meta", title: "Meta", defaultContent: "" },
@@ -165,6 +172,10 @@
             { data: "MaxDiasAtraso", title: "Atraso", defaultContent: "" },
             { data: "CuotasEnAtraso", title: "Cuotas Atraso", defaultContent: "" },
             { data: "DiaPagoCuota", title: "Fecha de Pago", defaultContent: "" }
+            <?php if ($_SESSION['PORTAL_COBROS']['rol'] !== 'TELECOBRO') { ?>,
+                { data: "nombregestor", title: "Gestor", defaultContent: "" }
+            <?php } ?>
+
         ],
         dom: 'Bfrtip',
         buttons: [
