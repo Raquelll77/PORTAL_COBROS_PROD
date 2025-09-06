@@ -27,22 +27,29 @@ class ClientesPrestamos extends ActiveRecord
         self::useSQLSrv2();
 
         $sql = "SELECT 
-                ClReferencia AS ClReferencia, 
+                cc.ClReferencia AS ClReferencia, 
                 cp.PreNombre AS PreNombre, 
                 cc.ClNumID AS ClNumID, 
                 cp.PreNumero AS PreNumero, 
                 FORMAT(cp.PreFecAprobacion, 'dd-MM-yyyy') AS PreFecAprobacion,
                 CASE WHEN cp.PreSalCapital = 0 THEN 'Cancelado' ELSE 'Vigente' END AS PreSalCapital, 
                 cp.PreComentario AS PreComentario, 
+                     -- Pivot de las series
+            MAX(CASE WHEN s.ApCalCod = 16 THEN s.CrCalVAlfa END) AS SerieChasis,
+            MAX(CASE WHEN s.ApCalCod = 17 THEN s.CrCalVAlfa END) AS SerieMotor,
                 pg.nombregestor
+            
             FROM " . static::$tabla . " AS cp
             INNER JOIN SIFCO.ClClientes AS cc 
                 ON cp.PreCliCod = cc.ClCliCod
             LEFT JOIN [192.168.1.3].MOVESAWEB.dbo.prestamosGestor AS pg 
                 ON pg.prenumero = cp.PreNumero
+            LEFT JOIN SIFCO.CrCalSPLevel1 AS s 
+                ON cp.PreNumero = s.CrCalNumero
             WHERE 1=1";
 
         $params = [];
+
         if ($dni) {
             $sql .= " AND cc.ClNumID = :dni";
             $params[':dni'] = $dni;
@@ -56,21 +63,40 @@ class ClientesPrestamos extends ActiveRecord
             $params[':prenumero'] = $prenumero;
         }
 
+        // Agrupar porque usamos MAX()
+        $sql .= " 
+            GROUP BY 
+                cc.ClReferencia, 
+                cp.PreNombre, 
+                cc.ClNumID, 
+                cp.PreNumero, 
+                cp.PreFecAprobacion, 
+                cp.PreSalCapital, 
+                cp.PreComentario, 
+                pg.nombregestor
+            ORDER BY cp.PreFecAprobacion DESC";
+
         return self::consultarSQL($sql, $params);
     }
 
-    public static function getInfoClientes($identidad, $fechaAprobacion)
+
+    public static function getInfoClientes($serie = null)
     {
         // Cambiar a la conexión de la base de datos donde se encuentra el procedimiento almacenado
         self::useMySQL();
 
         // Definir el llamado al procedimiento almacenado con `CALL` y utilizar `?` para los parámetros
-        $sql = "CALL sp_ObtenerInformacionPorIdentidadYFecha(?, ?)";
-        $params = [$identidad, $fechaAprobacion];
+        $sql = "CALL sp_BuscarPrestamoSerie(?)";
+
+        // Orden de los parámetros debe coincidir con el procedimiento
+        $params = [
+            $serie
+        ];
 
         // Llamar a consultarSQL indicando que es un procedimiento almacenado
         return self::consultarSQL($sql, $params, true);
     }
+
 
     public static function getSaldoClientes($prenumero)
     {

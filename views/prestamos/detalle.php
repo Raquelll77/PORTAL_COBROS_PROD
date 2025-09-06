@@ -429,6 +429,13 @@
         </div>
 
         <?php include __DIR__ . '/secciones/visitas_domiciliares.php'; ?>
+        <br>
+        <br>
+        <br>
+        <br>
+        <a class="boton-volver"
+            href="<?= BASE_URL ?>/cobros?tab=<?= htmlspecialchars($_GET['tab'] ?? 'busqueda-clientes'); ?>">
+            < Volver </a>
     </div>
 
 

@@ -95,15 +95,14 @@ class PrestamoController
             exit;
         }
 
-        // Procesar solicitudes GET
         $prenumero = $_GET['prenumero'] ?? null;
-        $identidad = str_replace(' ', '', $_GET['identidad'] ?? null);
-        $fecha = self::validarFecha($_GET['fecha'] ?? null, 'd-m-Y');
+        $serie = $_GET['serie'] ?? null;
+        $fecha = $_GET['fecha'] ?? null;
 
         $prestamoDetalle = $saldoPrestamo = $pagosClientes = $historialGestiones = $comentarioPermanente = $promesas = null;
 
         if ($prenumero) {
-            $prestamoDetalle = ClientesPrestamos::getInfoClientes($identidad, $fecha);
+            $prestamoDetalle = ClientesPrestamos::getInfoClientes($serie);
             $saldoPrestamo = ClientesPrestamos::getSaldoClientes($prenumero);
             $pagosClientes = ClientesPrestamos::ObtenerPagosCliente($prenumero);
 

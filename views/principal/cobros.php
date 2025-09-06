@@ -59,16 +59,18 @@
                     <tbody>
                         <?php foreach ($prestamos as $prestamo): ?>
                             <tr class="clickable-row" data-href="<?= BASE_URL ?>/prestamos/detalle?
-                        prenumero=<?= urlencode($prestamo->PreNumero) ?>&
-                        identidad=<?= urlencode($prestamo->ClNumID) ?>&
-                        fecha=<?= urlencode($prestamo->PreFecAprobacion) ?>&
-                        tab=busqueda-clientes">
+                                prenumero=<?= urlencode($prestamo->PreNumero) ?>&
+                                serie=<?= urlencode($prestamo->SerieChasis) ?>&
+                                fecha=<?= urlencode($prestamo->PreFecAprobacion) ?>&
+                                tab=busqueda-clientes">
+
                                 <?php foreach ((array) $prestamo as $campo => $valor): ?>
                                     <td><?= htmlspecialchars($valor) ?></td>
                                 <?php endforeach; ?>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
+
                 </table>
             <?php } else { ?>
                 <p>No se encontraron resultados.</p>
@@ -91,10 +93,12 @@
                         <th>Fecha de Aprobación</th>
                         <th>Estatus</th>
                         <th>Comentario</th>
+                        <th>Serie</th>
                         <th>Departamento</th>
                         <th>Municipio</th>
                         <th>Cod Resultado</th>
                         <th>Fecha Revisión</th>
+                        <th>Fecha Promesa</th>
                         <th>Meta</th>
                         <th>Pagos</th>
                         <th>Atraso</th>
@@ -163,10 +167,12 @@
             { data: "PreFecAprobacion", title: "Fecha de Aprobación", defaultContent: "" },
             { data: "segmento", title: "Segmento", defaultContent: "" },
             { data: "PreComentario", title: "Comentario", defaultContent: "" },
+            { data: "SerieChasis", title: "Serie", defaultContent: "" },
             { data: "Departamento", title: "Departamento", defaultContent: "" },
             { data: "Municipio", title: "Municipio", defaultContent: "" },
             { data: "codigo_resultado", title: "Cod Resultado", defaultContent: "" },
             { data: "fecha_revision", title: "Fecha Revisión", defaultContent: "" },
+            { data: "fecha_promesa", title: "Fecha Promesa", defaultContent: "" },
             { data: "meta", title: "Meta", defaultContent: "" },
             { data: "total_pagos_mes_actual", title: "Pagos", defaultContent: "" },
             { data: "MaxDiasAtraso", title: "Atraso", defaultContent: "" },
@@ -201,7 +207,7 @@
         createdRow: function (row, data) {
             const href = "<?= BASE_URL ?>/prestamos/detalle"
                 + "?prenumero=" + encodeURIComponent(data.PreNumero || "")
-                + "&identidad=" + encodeURIComponent(data.ClNumID || "")
+                + "&serie=" + encodeURIComponent(data.SerieChasis || "")
                 + "&fecha=" + encodeURIComponent(data.PreFecAprobacion || "")
                 + "&tab=clientes-asignados";
 
