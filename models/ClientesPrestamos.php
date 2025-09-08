@@ -34,18 +34,21 @@ class ClientesPrestamos extends ActiveRecord
                 cp.PreNumero AS PreNumero, 
                 FORMAT(cp.PreFecAprobacion, 'dd-MM-yyyy') AS PreFecAprobacion,
                 CASE WHEN cp.PreSalCapital = 0 THEN 'Cancelado' ELSE 'Vigente' END AS PreSalCapital, 
-                cp.PreComentario AS PreComentario, 
-                     -- Pivot de las series
-            MAX(CASE WHEN s.ApCalCod = 16 THEN s.CrCalVAlfa END) AS SerieChasis,
+                cp.PreComentario AS PreComentario,
+                serie.CrCalVAlfa AS SerieChasis,  -- 🔹 Última serie
                 pg.nombregestor
-            
             FROM " . static::$tabla . " AS cp
             INNER JOIN SIFCO.ClClientes AS cc 
                 ON cp.PreCliCod = cc.ClCliCod
             LEFT JOIN [192.168.1.3].MOVESAWEB.dbo.prestamosGestor AS pg 
                 ON pg.prenumero = cp.PreNumero
-            LEFT JOIN SIFCO.CrCalSPLevel1 AS s 
-                ON cp.PreNumero = s.CrCalNumero
+            OUTER APPLY (
+                SELECT TOP 1 s.CrCalVAlfa
+                FROM SIFCO.CrCalSPLevel1 s
+                WHERE s.CrCalNumero = cp.PreNumero
+                  AND s.ApCalCod = 16
+                ORDER BY s.CrCalCorre DESC   -- 🔹 última serie registrada
+            ) serie
             WHERE 1=1";
 
         $params = [];
@@ -63,22 +66,10 @@ class ClientesPrestamos extends ActiveRecord
             $params[':prenumero'] = $prenumero;
         }
 
-        // Agrupar porque usamos MAX()
-        $sql .= " 
-            GROUP BY 
-                cc.ClReferencia, 
-                cp.PreNombre, 
-                cc.ClNumID, 
-                cp.PreNumero, 
-                cp.PreFecAprobacion, 
-                cp.PreSalCapital, 
-                cp.PreComentario, 
-                pg.nombregestor
-            ORDER BY cp.PreFecAprobacion DESC";
+        $sql .= " ORDER BY cp.PreFecAprobacion DESC";
 
         return self::consultarSQL($sql, $params);
     }
-
 
     public static function getInfoClientes($serie = null)
     {
