@@ -7,7 +7,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 class ClientesPrestamos extends ActiveRecord
 {
     protected static $tabla = 'SIFCO.CrPrestamos';
-    protected static $columnasDB = ['ClReferencia', 'PreNombre', 'ClNumID', 'PreNumero', 'PreFecAprobacion', 'PreSalCapital', 'PreComentario'];
+    protected static $columnasDB = ['ClReferencia', 'PreNombre', 'ClNumID', 'PreNumero', 'PreFecAprobacion', 'PreSalCapital', 'PreComentario', 'SerieChasis'];
 
     const ClReferencia = 'ClReferencia';
 
@@ -20,6 +20,7 @@ class ClientesPrestamos extends ActiveRecord
         $this->PreFecAprobacion = $args['PreFecAprobacion'] ?? '';
         $this->PreSalCapital = $args['PreSalCapital'] ?? '';
         $this->PreComentario = $args['PreComentario'] ?? '';
+        $this->SerieChasis = $args['SerieChasis'] ?? '';
     }
 
     public static function buscarCreditosClientes($dni = null, $nombre = null, $prenumero = null)
@@ -36,7 +37,6 @@ class ClientesPrestamos extends ActiveRecord
                 cp.PreComentario AS PreComentario, 
                      -- Pivot de las series
             MAX(CASE WHEN s.ApCalCod = 16 THEN s.CrCalVAlfa END) AS SerieChasis,
-            MAX(CASE WHEN s.ApCalCod = 17 THEN s.CrCalVAlfa END) AS SerieMotor,
                 pg.nombregestor
             
             FROM " . static::$tabla . " AS cp
