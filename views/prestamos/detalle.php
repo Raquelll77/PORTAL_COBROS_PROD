@@ -355,7 +355,7 @@
                                     <button id="btn-editar-<?= $gestion->id ?>" class="btn-editar" data-id="<?= $gestion->id ?>"
                                         data-codigo="<?= $gestion->codigo_resultado ?>"
                                         data-revision="<?= $gestion->fecha_revision ?>"
-                                        data-promesa="<?= $gestion->fecha_promesa ?>" data-monto="<?= $gestion->monto_promesa ?>"
+                                        data-promesa="<?= $gestion->fecha_promesa ?>" data-monto="<?= $gestion->montoPromesa ?>"
                                         data-numero="<?= $gestion->numero_contactado ?>"
                                         data-comentario="<?= $gestion->comentario ?>">
                                         Editar
@@ -600,7 +600,7 @@
                                 data-codigo="${g.codigo_resultado}"
                                 data-revision="${g.fecha_revision}"
                                 data-promesa="${g.fecha_promesa}"
-                                data-monto="${g.monto_promesa}"
+                                data-monto="${g.montoPromesa}"
                                 data-numero="${g.numero_contactado}"
                                 data-comentario="${g.comentario}">
                                 Editar
@@ -638,49 +638,105 @@
 
             Swal.fire({
                 title: "Editar gestión",
+                width: '650px', // ancho mayor
                 html: `
-                  ${opciones}
-                  <input id="editFechaRevision" type="date" class="swal2-input" value="${e.target.dataset.revision || ''}">
-                  <input id="editFechaPromesa" type="date" class="swal2-input" value="${e.target.dataset.promesa || ''}">
-                  <input id="editMontoPromesa" type="number" class="swal2-input" value="${e.target.dataset.monto || ''}">
-                  <input id="editNumeroContactado" type="number" class="swal2-input" value="${e.target.dataset.numero || ''}">
-                  <textarea id="editComentario" class="swal2-textarea">${e.target.dataset.comentario || ''}</textarea>
+                <div style="display: flex; flex-direction: column; gap: 12px; text-align: left;">
+
+                    <label for="editCodigoResultado"><strong>Código de Resultado</strong></label>
+                    ${opciones}
+
+                    <label for="editFechaRevision"><strong>Fecha de Revisión</strong></label>
+                    <input id="editFechaRevision" type="date" class="swal2-input"
+                        style="width: 90%;" value="${e.target.dataset.revision || ''}" required>
+
+                    <label for="editFechaPromesa"><strong>Fecha de Promesa</strong></label>
+                    <input id="editFechaPromesa" type="date" class="swal2-input"
+                        style="width: 90%;" value="${e.target.dataset.promesa || ''}" disabled>
+
+                    <label for="editMontoPromesa"><strong>Monto Promesa</strong></label>
+                    <input id="editMontoPromesa" type="number" class="swal2-input"
+                        placeholder="ejem: L3000" style="width: 90%;"
+                        value="${e.target.dataset.monto || ''}" disabled>
+
+                    <label for="editNumeroContactado"><strong>Número Contactado</strong></label>
+                    <input id="editNumeroContactado" type="number" class="swal2-input"
+                        placeholder="ejem: 88889999" style="width: 90%;"
+                        value="${e.target.dataset.numero || ''}" required>
+
+                    <label for="editComentario"><strong>Comentario</strong></label>
+                    <textarea id="editComentario" class="swal2-textarea"
+                            placeholder="Ej: Cliente promete pagar el 15"
+                            style="width: 90%; height: 90px;" required>${e.target.dataset.comentario || ''}</textarea>
+                </div>
                 `,
                 didOpen: () => {
+                    // seleccionar valor actual
                     document.getElementById("editCodigoResultado").value = e.target.dataset.codigo || '';
 
-                    // habilitar/deshabilitar promesa según código actual
                     const fechaPromesa = document.getElementById("editFechaPromesa");
                     const montoPromesa = document.getElementById("editMontoPromesa");
-                    if (!codigosPositivos.includes(e.target.dataset.codigo)) {
+
+                    // habilitar/deshabilitar según código inicial
+                    if (codigosPositivos.includes(e.target.dataset.codigo)) {
+                        fechaPromesa.disabled = false;
+                        montoPromesa.disabled = false;
+                        fechaPromesa.required = true;
+                        montoPromesa.required = true;
+                    } else {
                         fechaPromesa.disabled = true;
                         montoPromesa.disabled = true;
+                        fechaPromesa.required = false;
+                        montoPromesa.required = false;
                     }
 
-                    // si el usuario cambia el código
+                    // validar cambios en el select
                     document.getElementById("editCodigoResultado").addEventListener("change", ev => {
                         if (codigosPositivos.includes(ev.target.value)) {
                             fechaPromesa.disabled = false;
                             montoPromesa.disabled = false;
+                            fechaPromesa.required = true;
+                            montoPromesa.required = true;
                         } else {
                             fechaPromesa.value = "";
                             montoPromesa.value = "";
                             fechaPromesa.disabled = true;
                             montoPromesa.disabled = true;
+                            fechaPromesa.required = false;
+                            montoPromesa.required = false;
                         }
                     });
                 },
                 showCancelButton: true,
                 confirmButtonText: "Guardar cambios",
                 preConfirm: () => {
+                    const codigo = document.getElementById("editCodigoResultado").value;
+                    const fechaRevision = document.getElementById("editFechaRevision").value;
+                    const fechaPromesa = document.getElementById("editFechaPromesa").value;
+                    const montoPromesa = document.getElementById("editMontoPromesa").value;
+                    const numero = document.getElementById("editNumeroContactado").value;
+                    const comentario = document.getElementById("editComentario").value;
+
+                    // validaciones extra para los positivos
+                    if (codigosPositivos.includes(codigo)) {
+                        if (!fechaPromesa || !montoPromesa) {
+                            Swal.showValidationMessage("Debe ingresar Fecha y Monto de Promesa");
+                            return false;
+                        }
+                    }
+
+                    if (!fechaRevision || !numero || !comentario) {
+                        Swal.showValidationMessage("Todos los campos obligatorios deben estar llenos");
+                        return false;
+                    }
+
                     return {
                         id,
-                        codigoResultado: document.getElementById("editCodigoResultado").value,
-                        fechaRevision: document.getElementById("editFechaRevision").value,
-                        fechaPromesa: document.getElementById("editFechaPromesa").value,
-                        montoPromesa: document.getElementById("editMontoPromesa").value,
-                        numeroContactado: document.getElementById("editNumeroContactado").value,
-                        comentarioGestion: document.getElementById("editComentario").value
+                        codigoResultado: codigo,
+                        fechaRevision,
+                        fechaPromesa,
+                        montoPromesa,
+                        numeroContactado: numero,
+                        comentarioGestion: comentario
                     };
                 }
             }).then(result => {

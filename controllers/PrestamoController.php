@@ -32,12 +32,13 @@ class PrestamoController
 
 
             $fecha_promesa = in_array($params['codigoResultado'], $codigosPositivosArray)
-                ? ($params['fechaPromesa'] ?? null)
+                ? (!empty($params['fechaPromesa']) ? $params['fechaPromesa'] : null)
                 : null;
 
             $monto_promesa = in_array($params['codigoResultado'], $codigosPositivosArray)
-                ? ($params['montoPromesa'] ?? 0)
+                ? (!empty($params['montoPromesa']) ? $params['montoPromesa'] : 0)
                 : 0;
+
 
             // Validar y procesar los datos de la gestión
             $gestionData = [
@@ -192,10 +193,23 @@ class PrestamoController
             // Actualizar datos
             $gestion->codigo_resultado = $_POST['codigoResultado'] ?? $gestion->codigo_resultado;
             $gestion->fecha_revision = $_POST['fechaRevision'] ?? $gestion->fecha_revision;
-            $gestion->fecha_promesa = $_POST['fechaPromesa'] ?? $gestion->fecha_promesa;
             $gestion->numero_contactado = $_POST['numeroContactado'] ?? $gestion->numero_contactado;
             $gestion->comentario = $_POST['comentarioGestion'] ?? $gestion->comentario;
-            $gestion->monto_promesa = $_POST['montoPromesa'] ?? $gestion->monto_promesa;
+
+            // === Validación de códigos positivos ===
+            $codigosPositivos = array_column(CodigosResultado::obtenerPositivos(), 'codigo');
+
+            if (in_array($gestion->codigo_resultado, $codigosPositivos)) {
+                $gestion->fecha_promesa = !empty($_POST['fechaPromesa']) ? $_POST['fechaPromesa'] : null;
+                $gestion->montoPromesa = (isset($_POST['montoPromesa']) && $_POST['montoPromesa'] !== '')
+                    ? (float) $_POST['montoPromesa']
+                    : 0.00;
+            } else {
+                // Si no es positivo → limpiar SIEMPRE
+                $gestion->fecha_promesa = null;
+                $gestion->montoPromesa = 0.00; // 
+            }
+
 
             if ($gestion->guardar()) {
                 // volver a calcular editable de todas las gestiones del mismo prenumero
