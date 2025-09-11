@@ -313,7 +313,7 @@ class ReportesController
         public static function descargarReporteDeterioro()
         {
             // Verificar autenticación
-            session_start();
+            session_name("PORTAL-COBROS");session_start();
             isAuth();
 
             // Generar el reporte

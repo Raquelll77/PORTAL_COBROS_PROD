@@ -29,6 +29,7 @@ class LoginController
                     } else {
                         // Comparar contraseña (plain por ahora)
                         if (($_POST['password'] ?? '') === (string) $usuario->password) {
+                            session_name("PORTAL-COBROS");
                             session_start();
                             $_SESSION['PORTAL_COBROS'] = [];
                             $_SESSION['PORTAL_COBROS']['id'] = $usuario->id;
@@ -64,6 +65,7 @@ class LoginController
     public static function logout()
     {
         // Cerrar la sesión
+        session_name("PORTAL-COBROS");
         session_start();
         $_SESSION['PORTAL_COBROS'] = [];
         header('Location: ' . BASE_URL . '/');

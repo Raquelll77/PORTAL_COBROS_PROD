@@ -59,6 +59,7 @@
 
     <?php
     if (session_status() === PHP_SESSION_NONE) {
+        session_name("PORTAL-COBROS");
         session_start();
     }
     // viene del render del controlador

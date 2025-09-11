@@ -6,6 +6,7 @@ class AuthMiddleware
 {
     public static function verificarRol($rolesPermitidos)
     {
+        session_name("PORTAL-COBROS");
         session_start();
 
         if (!isset($_SESSION['PORTAL_COBROS']['id'])) {
