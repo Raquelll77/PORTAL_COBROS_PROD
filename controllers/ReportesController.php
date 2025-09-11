@@ -4,6 +4,7 @@ namespace Controllers;
 
 use Model\ClientesPrestamos;
 use Model\PrestamosXGestor;
+use Model\Promesas;
 use MVC\Router;
 use Model\Gestiones;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -384,5 +385,41 @@ class ReportesController
 
         );
     }
+
+    public static function vistaPromesas(Router $router)
+    {
+        isAuth();
+        $router->render('reportes/promesas', [
+            'titulo' => 'Dashboard Promesas'
+        ]);
+    }
+
+
+    public static function resumenPromesas(Router $router)
+    {
+        $data = Promesas::obtenerResumen();
+
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        exit;
+    }
+
+    public static function detallePromesas(Router $router)
+    {
+        $gestor = $_GET['gestor'] ?? null;
+
+        if (!$gestor) {
+            echo json_encode([]);
+            exit;
+        }
+
+        $data = Promesas::obtenerDetallePorGestor($gestor);
+
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        exit;
+    }
+
+
 
 }
