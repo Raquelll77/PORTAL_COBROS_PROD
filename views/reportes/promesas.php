@@ -6,7 +6,6 @@
 <div class="contenedor">
     <div class="contenedor-95">
         <h1 class="titulo-pagina text-center">Dashboard de Promesas Mensual</h1>
-        <h2 class="mt-4">Promesas por Gestor</h2>
         <div style="width:95%; margin:auto;">
             <canvas id="graficoPromesas"></canvas>
         </div>
@@ -176,6 +175,11 @@
                     y: { stacked: true }
                 },
                 plugins: {
+                    title: {
+                        display: true,
+                        text: "Porcentaje de Cumplimiento de Promesas por Gestor",
+                        font: { size: 16, weight: "bold" }
+                    },
                     legend: {
                         labels: { font: { size: 14 } }
                     },
