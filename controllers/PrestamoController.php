@@ -75,6 +75,20 @@ class PrestamoController
                 $historialGestiones = Gestiones::whereAll('prenumero', $params['prenumero'], 'ORDER BY fecha_creacion DESC');
                 $historialGestiones = is_iterable($historialGestiones) ? $historialGestiones : [];
 
+                foreach ($historialGestiones as $g) {
+                    $creador = $g->creado_por;
+                    $fechaCreacion = new \DateTime($g->fecha_creacion);
+                    $limite = (clone $fechaCreacion)->modify('+5 minutes');
+                    $ahora = new \DateTime();
+
+                    $g->editable = ($creador === $_SESSION['PORTAL_COBROS']['nombre'] && $ahora <= $limite);
+
+                    // timestamp UNIX para JS
+                    $g->timestamp_creacion = $fechaCreacion->getTimestamp();
+                }
+
+
+
                 $comentarioPermanente = ComentariosPermanentes::where('prenumero', $params['prenumero']);
 
                 // Enviar respuesta al frontend
@@ -109,6 +123,18 @@ class PrestamoController
             Gestiones::useSQLSrv();
             $historialGestiones = Gestiones::whereAll('prenumero', $prenumero, 'ORDER BY fecha_creacion DESC');
             $historialGestiones = is_iterable($historialGestiones) ? $historialGestiones : [];
+
+
+            foreach ($historialGestiones as $g) {
+                $creador = $g->creado_por;
+                $fechaCreacion = new \DateTime($g->fecha_creacion);
+                $limite = (clone $fechaCreacion)->modify('+5 minutes');
+                $ahora = new \DateTime();
+
+                $g->editable = ($creador === $_SESSION['PORTAL_COBROS']['nombre'] && $ahora <= $limite);
+                $g->timestamp_creacion = $fechaCreacion->getTimestamp();
+            }
+
             $comentarioPermanente = ComentariosPermanentes::where('prenumero', $prenumero);
             $promesas = Gestiones::obtenerPromesasPorCliente($prenumero);
         }
@@ -133,6 +159,71 @@ class PrestamoController
             'referencias' => $referencias
         ]);
     }
+
+    public static function editarGestion(Router $router)
+    {
+        isAuth();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            header('Content-Type: application/json'); // JSON puro, no HTML
+
+            $idGestion = $_POST['id'] ?? null;
+            if (!$idGestion) {
+                echo json_encode(['status' => 'error', 'message' => 'ID no recibido']);
+                exit;
+            }
+
+            Gestiones::useSQLSrv();
+            $gestion = Gestiones::find($idGestion);
+
+            if (!$gestion) {
+                echo json_encode(['status' => 'error', 'message' => 'Gestión no encontrada']);
+                exit;
+            }
+
+            $fechaCreacion = new \DateTime($gestion->fecha_creacion);
+            $limite = (clone $fechaCreacion)->modify('+5 minutes');
+
+            if ($gestion->creado_por !== ($_SESSION['PORTAL_COBROS']['nombre'] ?? '') || new \DateTime() > $limite) {
+                echo json_encode(['status' => 'error', 'message' => 'No tiene permisos para editar esta gestión']);
+                exit;
+            }
+
+            // Actualizar datos
+            $gestion->codigo_resultado = $_POST['codigoResultado'] ?? $gestion->codigo_resultado;
+            $gestion->fecha_revision = $_POST['fechaRevision'] ?? $gestion->fecha_revision;
+            $gestion->fecha_promesa = $_POST['fechaPromesa'] ?? $gestion->fecha_promesa;
+            $gestion->numero_contactado = $_POST['numeroContactado'] ?? $gestion->numero_contactado;
+            $gestion->comentario = $_POST['comentarioGestion'] ?? $gestion->comentario;
+            $gestion->monto_promesa = $_POST['montoPromesa'] ?? $gestion->monto_promesa;
+
+            if ($gestion->guardar()) {
+                // volver a calcular editable de todas las gestiones del mismo prenumero
+                $historialGestiones = Gestiones::whereAll('prenumero', $gestion->prenumero, 'ORDER BY fecha_creacion DESC');
+                foreach ($historialGestiones as $g) {
+                    $creador = $g->creado_por;
+                    $fechaCreacion = new \DateTime($g->fecha_creacion);
+                    $limite = (clone $fechaCreacion)->modify('+5 minutes');
+                    $ahora = new \DateTime();
+                    $g->editable = ($creador === ($_SESSION['PORTAL_COBROS']['nombre'] ?? '') && $ahora <= $limite);
+                }
+
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => 'Gestión actualizada correctamente',
+                    'historialGestiones' => $historialGestiones
+                ]);
+                exit;
+            }
+        }
+
+        // Si llegan por GET u otro método
+        header('Content-Type: application/json');
+        echo json_encode(['status' => 'error', 'message' => 'Método no permitido']);
+        exit;
+    }
+
+
 
 
     public static function guardarVisita()

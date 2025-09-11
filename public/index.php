@@ -34,6 +34,8 @@ $router->post('/prestamos/guardar-referencia', [PrestamoController::class, 'guar
 $router->get('/prestamos/obtener-referencias', [PrestamoController::class, 'obtenerReferencias'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO']);
 
 $router->get('/prestamos/estado-cuenta', [PrestamoController::class, 'estadoCuentaView'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO']);
+$router->post('/prestamos/editarGestion', [PrestamoController::class, 'editarGestion'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO']);
+
 
 
 

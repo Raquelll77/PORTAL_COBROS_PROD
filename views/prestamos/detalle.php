@@ -351,6 +351,33 @@
                                         Creado por: <?= htmlspecialchars($gestion->creado_por); ?>
                                     </p>
                                 </div>
+                                <?php if ($gestion->editable): ?>
+                                    <button id="btn-editar-<?= $gestion->id ?>" class="btn-editar" data-id="<?= $gestion->id ?>"
+                                        data-codigo="<?= $gestion->codigo_resultado ?>"
+                                        data-revision="<?= $gestion->fecha_revision ?>"
+                                        data-promesa="<?= $gestion->fecha_promesa ?>" data-monto="<?= $gestion->monto_promesa ?>"
+                                        data-numero="<?= $gestion->numero_contactado ?>"
+                                        data-comentario="<?= $gestion->comentario ?>">
+                                        Editar
+                                    </button>
+                                    <script>
+                                        (function () {
+                                            const btnId = "btn-editar-<?= $gestion->id ?>";
+                                            const msRestantes = (<?= $gestion->timestamp_creacion ?> + 300) * 1000 - Date.now();
+                                            if (msRestantes > 0) {
+                                                setTimeout(() => {
+                                                    const btn = document.getElementById(btnId);
+                                                    if (btn) btn.remove();
+                                                }, msRestantes);
+                                            } else {
+                                                // si ya pasó el tiempo, eliminar de una vez
+                                                const btn = document.getElementById(btnId);
+                                                if (btn) btn.remove();
+                                            }
+                                        })();
+                                    </script>
+                                <?php endif; ?>
+
                             </div>
                         <?php endforeach; ?>
                     <?php } else { ?>
@@ -460,6 +487,7 @@
 
 </div>
 
+
 <style>
     .tab-content {
         display: none;
@@ -476,12 +504,14 @@
 <script src="<?= BASE_URL ?>/build/js/tabs.js"></script>
 <script>
     const codigosPositivos = <?= json_encode($codigosPositivosArray) ?>;
+
+    // === Guardar gestión ===
     function enviarGestion() {
         const form = document.getElementById('form-gestion');
         const data = new FormData(form);
 
         const cp = document.getElementById('comentarioPermanente');
-        if (cp) data.set('comentarioPermanente', cp.value); // <- clave
+        if (cp) data.set('comentarioPermanente', cp.value);
 
         Swal.fire({
             title: "Guardando gestión...",
@@ -503,44 +533,16 @@
             .then(response => {
                 if (response.status !== 'success') throw new Error(response.message || 'No se pudo guardar');
 
-                Swal.fire({
-                    icon: "success",
-                    title: "Gestión guardada exitosamente",
-                    showConfirmButton: false,
-                    timer: 1500
-                });
+                Swal.fire({ icon: "success", title: "Gestión guardada exitosamente", showConfirmButton: false, timer: 1500 });
 
-                // Render historial
-                const cont = document.querySelector('.historial-gestion-cards');
-                cont.innerHTML = '';
-                response.historialGestiones.forEach(g => {
-                    let html = `
-          <div class="gestion-card">
-            <div class="encabezado-gestion">
-              <span class="codigo-resultado">${g.codigo_resultado ?? ''}</span>
-              <span class="fecha-hora">${g.fecha_creacion ?? ''}</span>
-            </div>
-            <p class="comentario">${g.comentario ?? ''}</p>
-            <p class="numero-contactado">Número Contactado: ${g.numero_contactado ?? ''}</p>
-            <div class="detalles-secundarios">
-              <p><strong>Fecha de Revisión:</strong> ${g.fecha_revision ?? ''}</p>`;
-                    if (codigosPositivos.includes(g.codigo_resultado)) {
-                        html += `<p><strong>Fecha de Promesa:</strong> ${g.fecha_promesa ?? ''}</p>`;
-                    }
-                    html += `
-              <p class="nombre-gestor">Creado por: ${g.creado_por ?? ''}</p>
-            </div>
-          </div>`;
-                    cont.insertAdjacentHTML('beforeend', html);
-                });
+                renderHistorial(response.historialGestiones);
 
                 // Comentario permanente
-                const cp = document.getElementById('comentarioPermanente');
                 if (cp && response.comentarioPermanente) {
                     cp.value = response.comentarioPermanente.comentario || '';
                 }
 
-                // Reset solo del form de gestión
+                // Reset form
                 form.reset();
                 document.getElementById('fechaPromesa').disabled = true;
                 document.getElementById('montoPromesa').disabled = true;
@@ -551,13 +553,12 @@
             });
     }
 
-    // Listener del form de gestión (solo ese)
-    document.getElementById('form-gestion').addEventListener('submit', function (e) {
+    document.getElementById('form-gestion').addEventListener('submit', e => {
         e.preventDefault();
         enviarGestion();
     });
 
-    // Habilitar/Deshabilitar campos por código
+    // === Habilitar/Deshabilitar campos en alta ===
     document.getElementById("codigoResultado").addEventListener("change", function () {
         const fechaPromesa = document.getElementById("fechaPromesa");
         const montoPromesa = document.getElementById("montoPromesa");
@@ -572,4 +573,149 @@
         }
     });
 
+    // === Render historial con expiración de botón ===
+    function renderHistorial(historial) {
+        const cont = document.querySelector('.historial-gestion-cards');
+        cont.innerHTML = '';
+        historial.forEach(g => {
+            let html = `
+                <div class="gestion-card">
+                    <div class="encabezado-gestion">
+                        <span class="codigo-resultado">${g.codigo_resultado ?? ''}</span>
+                        <span class="fecha-hora">${g.fecha_creacion ?? ''}</span>
+                    </div>
+                    <p class="comentario">${g.comentario ?? ''}</p>
+                    <p class="numero-contactado">Número Contactado: ${g.numero_contactado ?? ''}</p>
+                    <div class="detalles-secundarios">
+                        <p><strong>Fecha de Revisión:</strong> ${g.fecha_revision ?? ''}</p>`;
+            if (codigosPositivos.includes(g.codigo_resultado)) {
+                html += `<p><strong>Fecha de Promesa:</strong> ${g.fecha_promesa ?? ''}</p>`;
+            }
+            html += `<p class="nombre-gestor">Creado por: ${g.creado_por ?? ''}</p>`;
+
+            if (g.editable) {
+                const btnId = "btn-editar-" + g.id;
+                html += `<button id="${btnId}" class="btn-editar"
+                                data-id="${g.id}"
+                                data-codigo="${g.codigo_resultado}"
+                                data-revision="${g.fecha_revision}"
+                                data-promesa="${g.fecha_promesa}"
+                                data-monto="${g.monto_promesa}"
+                                data-numero="${g.numero_contactado}"
+                                data-comentario="${g.comentario}">
+                                Editar
+                          </button>`;
+
+                // programar auto-ocultar después de 5 minutos
+                if (g.timestamp_creacion) {
+                    const msRestantes = (g.timestamp_creacion + 300) * 1000 - Date.now();
+                    if (msRestantes > 0) {
+                        setTimeout(() => {
+                            const btn = document.getElementById(btnId);
+                            if (btn) btn.remove();
+                        }, msRestantes);
+                    }
+                }
+            }
+
+            html += `</div></div>`;
+            cont.insertAdjacentHTML('beforeend', html);
+        });
+    }
+
+    // === Botón editar gestión ===
+    document.addEventListener("click", function (e) {
+        if (e.target.classList.contains("btn-editar")) {
+            const id = e.target.dataset.id;
+
+            let opciones = `
+              <select id="editCodigoResultado" class="swal2-select">
+                <?php foreach ($codigosResultado as $codigo) { ?>
+                  <option value="<?= $codigo->codigo ?>"><?= $codigo->codigo ?></option>
+                <?php } ?>
+              </select>
+            `;
+
+            Swal.fire({
+                title: "Editar gestión",
+                html: `
+                  ${opciones}
+                  <input id="editFechaRevision" type="date" class="swal2-input" value="${e.target.dataset.revision || ''}">
+                  <input id="editFechaPromesa" type="date" class="swal2-input" value="${e.target.dataset.promesa || ''}">
+                  <input id="editMontoPromesa" type="number" class="swal2-input" value="${e.target.dataset.monto || ''}">
+                  <input id="editNumeroContactado" type="number" class="swal2-input" value="${e.target.dataset.numero || ''}">
+                  <textarea id="editComentario" class="swal2-textarea">${e.target.dataset.comentario || ''}</textarea>
+                `,
+                didOpen: () => {
+                    document.getElementById("editCodigoResultado").value = e.target.dataset.codigo || '';
+
+                    // habilitar/deshabilitar promesa según código actual
+                    const fechaPromesa = document.getElementById("editFechaPromesa");
+                    const montoPromesa = document.getElementById("editMontoPromesa");
+                    if (!codigosPositivos.includes(e.target.dataset.codigo)) {
+                        fechaPromesa.disabled = true;
+                        montoPromesa.disabled = true;
+                    }
+
+                    // si el usuario cambia el código
+                    document.getElementById("editCodigoResultado").addEventListener("change", ev => {
+                        if (codigosPositivos.includes(ev.target.value)) {
+                            fechaPromesa.disabled = false;
+                            montoPromesa.disabled = false;
+                        } else {
+                            fechaPromesa.value = "";
+                            montoPromesa.value = "";
+                            fechaPromesa.disabled = true;
+                            montoPromesa.disabled = true;
+                        }
+                    });
+                },
+                showCancelButton: true,
+                confirmButtonText: "Guardar cambios",
+                preConfirm: () => {
+                    return {
+                        id,
+                        codigoResultado: document.getElementById("editCodigoResultado").value,
+                        fechaRevision: document.getElementById("editFechaRevision").value,
+                        fechaPromesa: document.getElementById("editFechaPromesa").value,
+                        montoPromesa: document.getElementById("editMontoPromesa").value,
+                        numeroContactado: document.getElementById("editNumeroContactado").value,
+                        comentarioGestion: document.getElementById("editComentario").value
+                    };
+                }
+            }).then(result => {
+                if (result.isConfirmed) {
+                    const formData = new FormData();
+                    for (const [k, v] of Object.entries(result.value)) {
+                        formData.append(k, v);
+                    }
+
+                    fetch("<?= BASE_URL ?>/prestamos/editarGestion", {
+                        method: "POST",
+                        body: formData
+                    })
+                        .then(async res => {
+                            const ct = res.headers.get("content-type") || "";
+                            const raw = await res.text();
+                            if (!ct.includes("application/json")) {
+                                throw new Error("Esperaba JSON pero recibí: " + raw.substring(0, 200));
+                            }
+                            return JSON.parse(raw);
+                        })
+                        .then(response => {
+                            if (response.status === "success") {
+                                Swal.fire("Éxito", "Gestión actualizada", "success");
+                                renderHistorial(response.historialGestiones);
+                            } else {
+                                Swal.fire("Error", response.message, "error");
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Error en fetch:", err);
+                            Swal.fire("Error", "No se pudo actualizar: " + err.message, "error");
+                        });
+                }
+            });
+        }
+    });
 </script>
