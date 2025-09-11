@@ -7,14 +7,24 @@
 
     <div id="frm-envio-datos" class="contenedor-95">
         <div class="botones-detalle">
-            <a class="boton-volver"
-                href="<?= BASE_URL ?>/cobros?tab=<?= htmlspecialchars($_GET['tab'] ?? 'busqueda-clientes'); ?>">
-                < Volver </a>
-                    <a class="boton-estado-cuenta"
-                        href="<?= BASE_URL ?>/prestamos/estado-cuenta?prenumero=<?= urlencode($prenumero) ?>"
-                        target="_blank" rel="noopener">
-                        Ver estado de cuenta
-                    </a>
+            <?php
+            // Si viene el tab => volver a cobros con ese tab
+            if (!empty($_GET['tab'])) {
+                $volverUrl = BASE_URL . "/cobros?tab=" . urlencode($_GET['tab']);
+            } else {
+                // Si no hay tab => usar la página de donde vino
+                $volverUrl = $_SERVER['HTTP_REFERER'] ?? (BASE_URL . "/cobros");
+            }
+            ?>
+            <a class="boton-volver" href="<?= htmlspecialchars($volverUrl) ?>">
+                &lt; Volver
+            </a>
+
+            <a class="boton-estado-cuenta"
+                href="<?= BASE_URL ?>/prestamos/estado-cuenta?prenumero=<?= urlencode($prenumero) ?>" target="_blank"
+                rel="noopener">
+                Ver estado de cuenta
+            </a>
         </div>
 
 
@@ -29,7 +39,7 @@
                     <p><strong>Nombre:</strong> <?= $detalle['NombreCompleto']; ?></p>
                     <p><strong>Identidad:</strong> <?php echo htmlspecialchars($detalle['identidad']); ?></p>
                     <p><strong>Prestamo: </strong> <?= $_GET['prenumero'] ?></p>
-                    <p><strong>Fecha de Aprobacion:</strong> <?= $_GET['fecha']; ?></p>
+                    <p><strong>Fecha de Aprobacion:</strong> <?= $_GET['fecha'] ?? ''; ?></p>
                     <p><strong>Tipo persona:</strong> <?php echo htmlspecialchars($detalle['tipo_persona']); ?></p>
                     <p><strong>Ciudad:</strong> <?php echo htmlspecialchars($detalle['ciudad']); ?></p>
                     <p><strong>Departamento:</strong> <?php echo htmlspecialchars($detalle['departamento']); ?></p>
@@ -433,9 +443,18 @@
         <br>
         <br>
         <br>
-        <a class="boton-volver"
-            href="<?= BASE_URL ?>/cobros?tab=<?= htmlspecialchars($_GET['tab'] ?? 'busqueda-clientes'); ?>">
-            < Volver </a>
+        <?php
+        // Si viene el tab => volver a cobros con ese tab
+        if (!empty($_GET['tab'])) {
+            $volverUrl = BASE_URL . "/cobros?tab=" . urlencode($_GET['tab']);
+        } else {
+            // Si no hay tab => usar la página de donde vino
+            $volverUrl = $_SERVER['HTTP_REFERER'] ?? (BASE_URL . "/cobros");
+        }
+        ?>
+        <a class="boton-volver" href="<?= htmlspecialchars($volverUrl) ?>">
+            &lt; Volver
+        </a>
     </div>
 
 

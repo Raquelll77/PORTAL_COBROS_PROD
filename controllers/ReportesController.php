@@ -389,8 +389,11 @@ class ReportesController
     public static function vistaPromesas(Router $router)
     {
         isAuth();
+
+        $data = Promesas::obtenerResumen();
         $router->render('reportes/promesas', [
-            'titulo' => 'Dashboard Promesas'
+            'titulo' => 'Dashboard Promesas',
+            'dataJson' => json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
         ]);
     }
 
@@ -407,18 +410,21 @@ class ReportesController
     public static function detallePromesas(Router $router)
     {
         $gestor = $_GET['gestor'] ?? null;
+        $estado = $_GET['estado'] ?? null;
 
-        if (!$gestor) {
-            echo json_encode([]);
-            exit;
+        if ($gestor) {
+            $data = Promesas::obtenerDetallePorGestor($gestor);
+        } elseif ($estado) {
+            $data = Promesas::obtenerDetallePorEstado($estado);
+        } else {
+            $data = [];
         }
-
-        $data = Promesas::obtenerDetallePorGestor($gestor);
 
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         exit;
     }
+
 
 
 

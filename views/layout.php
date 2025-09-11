@@ -158,6 +158,18 @@
             $("#loftloader-wrapper").show();
             $("body").css("overflow", "hidden");
         });
+
+        // Mostrar loader global
+        function mostrarLoader(show = true) {
+            if (show) {
+                $("#loftloader-wrapper").show();
+                $("body").css("overflow", "hidden");
+            } else {
+                $("#loftloader-wrapper").hide();
+                $("body").css("overflow", "auto");
+            }
+        }
+
     </script>
 
 
