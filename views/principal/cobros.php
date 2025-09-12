@@ -83,6 +83,29 @@
     <div class="tab-content <?= $tab === 'clientes-asignados' ? 'active' : '' ?>" id="clientes-asignados">
         <h1 class="text-second">Clientes Asignados</h1>
         <div class="tabla-contenedor">
+            <div class="filtros-contenedor">
+                <label>
+                    Segmento:
+                    <select id="filtro-segmento">
+                        <option value="">Todos</option>
+                    </select>
+                </label>
+
+                <label>
+                    Día de Pago:
+                    <input type="number" id="filtro-dia" placeholder="ej: 15">
+                </label>
+
+                <label>
+                    Pagos:
+                    <select id="filtro-pagos">
+                        <option value="">Todos</option>
+                        <option value="con">Con Pagos</option>
+                        <option value="sin">Sin Pagos</option>
+                    </select>
+                </label>
+            </div>
+            <br>
             <table id="clientes-asignados-table" class="display">
                 <thead>
                     <tr>
@@ -216,6 +239,46 @@
                 .attr('data-href', href);
         }
     });
+
+    tablaAsignados.on('xhr', function () {
+        const data = tablaAsignados.ajax.json().data;
+
+        // Obtener valores únicos de segmento
+        const segmentos = [...new Set(data.map(item => item.segmento || "Sin segmento"))];
+
+        // Llenar el select
+        const select = $('#filtro-segmento');
+        select.empty().append('<option value="">Todos</option>');
+        segmentos.forEach(seg => {
+            select.append(`<option value="${seg}">${seg}</option>`);
+        });
+    });
+
+    $.fn.dataTable.ext.search.push(function (settings, data) {
+        if (settings.nTable.id !== 'clientes-asignados-table') return true;
+
+        const filtroSegmento = $('#filtro-segmento').val();
+        const filtroDia = $('#filtro-dia').val();
+        const filtroPagos = $('#filtro-pagos').val();
+
+        const segmento = data[5] || '';   // Columna segmento
+        const diaPago = data[17] || '';   // Columna día de pago
+        const pagos = parseFloat(data[14]) || 0;
+
+        if (filtroSegmento && segmento !== filtroSegmento) return false;
+        if (filtroDia && parseInt(diaPago) !== parseInt(filtroDia)) return false;
+        if (filtroPagos === 'con' && pagos <= 0) return false;
+        if (filtroPagos === 'sin' && pagos > 0) return false;
+
+        return true;
+    });
+
+    $('#filtro-segmento, #filtro-dia, #filtro-pagos').on('change keyup', function () {
+        tablaAsignados.draw();
+    });
+
+
+
 
     // 🔹 Forzar que el header se ajuste cuando se muestra el tab
     document.querySelectorAll('.tab-button').forEach(button => {
