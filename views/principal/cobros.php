@@ -242,7 +242,8 @@
     $('#clientes-asignados-table tbody').on('click', 'tr.clickable-row', function () {
         const href = $(this).data('href');
         if (href) {
-            window.location.href = href; // Redirigir al enlace especificado en data-href
+            // window.location.href = href; // Redirigir al enlace especificado en data-href
+            window.open(href, '_blank');
         }
     });
 
