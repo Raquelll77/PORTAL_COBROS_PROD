@@ -20,4 +20,9 @@
         <img src="<?= BASE_URL ?>/build/img/cateraAsignacion.png" alt="cartera-asignacion">
         <p class="texto-contenido">Asignacion de Cartera</p>
     </a>
+
+    <a href="<?= BASE_URL ?>/reportes-promesas" class="contenido-seccion">
+        <img src="<?= BASE_URL ?>/build/img/promesa.png" alt="cartera-promesas-pago">
+        <p class="texto-contenido">Cumplimiento Promesas</p>
+    </a>
 </main>
