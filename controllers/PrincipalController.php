@@ -17,37 +17,41 @@ class PrincipalController
         ]);
     }
 
+    /**
+     * Render de la vista principal de Cobros con pestañas.
+     */
     public static function buscarPrestamos(Router $router)
     {
         isAuth();
 
-        $prestamos = '';
+        $prestamos = [];
         $prestamoXGestor = [];
 
         // Determinar pestaña activa
         $tab = $_POST['tab'] ?? $_GET['tab'] ?? 'busqueda-clientes';
 
-        // Solo cargar clientes asignados si se abre esa pestaña
+        // Solo si se abre la pestaña "clientes-asignados" traemos esos datos
         if ($tab === 'clientes-asignados') {
-            $prestamoXGestor = ClientesPrestamos::obtenerPrestamosPorGestor($_SESSION['PORTAL_COBROS']['usuario']);
+            $prestamoXGestor = ClientesPrestamos::obtenerPrestamosPorGestor(
+                $_SESSION['PORTAL_COBROS']['usuario']
+            );
         }
 
-        // Si es búsqueda de clientes
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' and $tab === 'busqueda-clientes') {
-            $identidad = $_POST['identidad'] ?? null;
-            $nombre = $_POST['nombre'] ?? null;
-            $prenumero = $_POST['prenumero'] ?? null;
+        // Si estamos en la pestaña de búsqueda
+        if ($tab === 'busqueda-clientes') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $identidad = $_POST['identidad'] ?? null;
+                $nombre = $_POST['nombre'] ?? null;
+                $prenumero = $_POST['prenumero'] ?? null;
 
-            // Ejecutar búsqueda
-            $prestamos = ClientesPrestamos::buscarCreditosClientes($identidad, $nombre, $prenumero);
+                $prestamos = ClientesPrestamos::buscarCreditosClientes($identidad, $nombre, $prenumero);
 
-            // Guardar resultado en sesión
-            $_SESSION['PORTAL_COBROS']['ultimos_prestamos'] = $prestamos;
-        } else {
-            // Recuperar último resultado si existe
-            $prestamos = $_SESSION['PORTAL_COBROS']['ultimos_prestamos'] ?? [];
+                // Guardar en sesión solo para esta pestaña
+                $_SESSION['PORTAL_COBROS']['ultimos_prestamos'] = $prestamos;
+            } else {
+                $prestamos = $_SESSION['PORTAL_COBROS']['ultimos_prestamos'] ?? [];
+            }
         }
-
 
         $router->render('principal/cobros', [
             'titulo' => 'Cobros',
@@ -57,6 +61,9 @@ class PrincipalController
         ]);
     }
 
+    /**
+     * Endpoint para DataTables de Clientes Asignados
+     */
     public static function listarAsignados()
     {
         isAuth();
@@ -65,10 +72,8 @@ class PrincipalController
         $usuario = $_SESSION['PORTAL_COBROS']['usuario'] ?? '';
 
         if ($rol === 'TELECOBRO') {
-            // Solo los préstamos asignados a este gestor
             $prestamos = ClientesPrestamos::obtenerPrestamosPorGestor($usuario);
         } else {
-            // Todos los préstamos (general, incluye nombregestor)
             $prestamos = ClientesPrestamos::obtenerPrestamosGeneral();
         }
 
@@ -96,7 +101,6 @@ class PrincipalController
                 "DiaPagoCuota" => $fila['DiaPagoCuota'] ?? ''
             ];
 
-            // Solo en el general existe nombregestor
             if (isset($fila['nombregestor'])) {
                 $base["nombregestor"] = mb_convert_encoding($fila['nombregestor'] ?? '', 'UTF-8', 'auto');
             }
@@ -109,7 +113,21 @@ class PrincipalController
         exit;
     }
 
+    /**
+     * Endpoint AJAX para búsqueda de clientes (no recarga la vista completa).
+     */
+    public static function buscarPrestamosAjax()
+    {
+        isAuth();
 
+        $identidad = $_POST['identidad'] ?? null;
+        $nombre = $_POST['nombre'] ?? null;
+        $prenumero = $_POST['prenumero'] ?? null;
 
+        $prestamos = ClientesPrestamos::buscarCreditosClientes($identidad, $nombre, $prenumero);
 
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($prestamos, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        exit;
+    }
 }
