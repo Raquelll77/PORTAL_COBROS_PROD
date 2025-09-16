@@ -93,6 +93,14 @@ class Promesas extends ActiveRecord
 
         return self::consultarSQL($sql, [':estado' => $estado]);
     }
+    public static function descargarPromesas()
+    {
+
+        self::useSQLSrv();
+        $sql = "SELECT * FROM vw_PromesasDetalle where MONTH(fecha_creacion) = MONTH(GETDATE())
+        AND YEAR(fecha_creacion) = YEAR(GETDATE())";
+        return self::consultarSQL($sql, null);
+    }
 
 
 

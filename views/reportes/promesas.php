@@ -1,11 +1,13 @@
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
-
-
-
 <div class="contenedor">
     <div class="contenedor-95">
         <h1 class="titulo-pagina text-center">Dashboard de Promesas Mensual</h1>
+        <button id="descargarExcel" class="ui button green">
+            <i class="file excel icon"></i>Descargar Excel
+        </button>
+        <button id="descargarPDF" class="ui button red">
+            <i class="file pdf icon"></i>Descargar PDF
+        </button>
+
         <div style="width:95%; margin:auto;">
             <canvas id="graficoPromesas"></canvas>
         </div>
@@ -18,10 +20,6 @@
         <!-- Detalle -->
         <h2 id="titulo-detalle" style="margin-top:30px;">Detalle de Promesas</h2>
         <div class="tabla-contenedor mt-3">
-            <!-- Loader estilo Fomantic -->
-            <!-- <div id="loader-detalle" class="ui inverted dimmer">
-                <div class="ui text loader">Cargando detalle...</div>
-            </div> -->
 
             <table id="tablaDetalle" class="ui celled striped table" style="width:100%">
                 <thead>
@@ -42,22 +40,7 @@
     </div>
 </div>
 
-<!-- 1. jQuery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-<!-- 2. DataTables Core -->
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
-<!-- 3. DataTables Buttons -->
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.colVis.min.js"></script>
-
-<!-- 4. Dependencias de exportación -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 
 <script>
     let tablaDetalle;
@@ -253,15 +236,15 @@
 
     function mostrarLoader(show) {
         if (show) {
-            $("#loader-detalle").addClass("active");  // 🔹 muestra loader
+            $("#loader-detalle").addClass("active");
         } else {
-            $("#loader-detalle").removeClass("active"); // 🔹 oculta loader
+            $("#loader-detalle").removeClass("active");
         }
     }
 
 
 
-    // 🔹 Cargar detalle de un gestor seleccionado
+    // Cargar detalle de un gestor seleccionado
     function cargarDetalle(gestor) {
         document.getElementById("titulo-detalle").innerText = "Detalle de Promesas - " + gestor;
         mostrarLoader(true);
@@ -276,7 +259,7 @@
             });
     }
 
-    // 🔹 Cargar detalle global por estado (Cumplidas / Incumplidas)
+    // Cargar detalle global por estado (Cumplidas / Incumplidas)
     function cargarDetalleGlobal(estado) {
         const estadoSQL = estado.toUpperCase().slice(0, -1);
         document.getElementById("titulo-detalle").innerText = "Detalle de Promesas - " + estado;
@@ -292,5 +275,110 @@
                 mostrarLoader(false);
             });
     }
+
+    // Botón Excel -> descarga TODO
+    document.getElementById("descargarExcel").addEventListener("click", function () {
+        mostrarLoader(true);
+        fetch("/PORTAL-COBROS/public/reportes-descargar-promesas")
+            .then(r => r.json())
+            .then(data => {
+                const header = [
+                    "Prenumero",
+                    "Numero contactado",
+                    "Fecha Creación",
+                    "Fecha Promesa",
+                    "Codigo resultado",
+                    "Monto Promesa",
+                    "Total Pagado",
+                    "Estado",
+                    "Nombre Gestor"
+                ];
+
+                const rows = data.map(d => [
+                    d.prenumero || "",
+                    d.numero_contactado || "",
+                    d.fecha_creacion || "",
+                    d.fecha_promesa || "",
+                    d.codigo_resultado || "",
+                    d.montoPromesa || "",
+                    d.TotalPagado || "",
+                    d.estado_promesa || "",
+                    d.creado_por || ""
+                ]);
+
+                const worksheet = XLSX.utils.aoa_to_sheet([header, ...rows]);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Promesas");
+
+                XLSX.writeFile(workbook, "reporte_promesas.xlsx");
+            })
+            .finally(() => {
+                mostrarLoader(false);
+            });
+    });
+
+
+    // Botón PDF -> descarga TODO
+    document.getElementById("descargarPDF").addEventListener("click", function () {
+        mostrarLoader(true);
+        fetch("/PORTAL-COBROS/public/reportes-descargar-promesas")
+            .then(r => r.json())
+            .then(data => {
+                const header = [
+                    "Prenumero",
+                    "Numero contactado",
+                    "Fecha Creación",
+                    "Fecha Promesa",
+                    "Codigo resultado",
+                    "Monto Promesa",
+                    "Total Pagado",
+                    "Estado",
+                    "Nombre Gestor"
+                ];
+
+                const body = [header];
+                data.forEach(d => {
+                    body.push([
+                        d.prenumero || "",
+                        d.numero_contactado || "",
+                        d.fecha_creacion || "",
+                        d.fecha_promesa || "",
+                        d.codigo_resultado || "",
+                        d.montoPromesa || "",
+                        d.TotalPagado || "",
+                        d.estado_promesa || "",
+                        d.creado_por || ""
+                    ]);
+                });
+
+                const docDefinition = {
+                    pageOrientation: 'landscape',
+                    content: [
+                        { text: "Reporte Detalle de Promesas", style: 'header', alignment: 'center' },
+                        { text: new Date().toLocaleString(), alignment: 'right', margin: [0, 0, 0, 10] },
+                        {
+                            table: {
+                                headerRows: 1,
+                                widths: ["auto", "auto", "auto", "auto", "auto", "auto", "auto", "auto", "*"],
+                                body: body
+                            },
+                            layout: 'lightHorizontalLines'
+                        }
+                    ],
+                    styles: {
+                        header: {
+                            fontSize: 16,
+                            bold: true,
+                            margin: [0, 0, 0, 10]
+                        }
+                    }
+                };
+
+                pdfMake.createPdf(docDefinition).download("reporte_promesas.pdf");
+            }).finally(() => {
+                mostrarLoader(false);
+            });
+    });
+
 
 </script>

@@ -54,6 +54,7 @@ $router->get('/reportes-asignacion', [ReportesController::class, 'asignacionCart
 $router->get('/reportes-promesas', [ReportesController::class, 'vistaPromesas'], ['ADMIN', 'SUPERVISOR']);
 $router->get('/reportes-resumen-promesas', [ReportesController::class, 'resumenPromesas'], ['ADMIN', 'SUPERVISOR']);
 $router->get('/reportes-detalle-promesas', [ReportesController::class, 'detallePromesas'], ['ADMIN', 'SUPERVISOR']);
+$router->get('/reportes-descargar-promesas', [ReportesController::class, 'descargarPromesas'], ['ADMIN', 'SUPERVISOR']);
 
 
 
