@@ -160,6 +160,51 @@
     </style>
 
     <script>
+
+        const originalFetch = window.fetch;
+        window.fetch = function (...args) {
+            return originalFetch(...args).then(async response => {
+                try {
+                    const clone = response.clone();
+                    const data = await clone.json();
+                    if (data.status === "expired") {
+                        Swal.fire({
+                            icon: "warning",
+                            title: "Sesión expirada",
+                            text: data.mensaje,
+                            confirmButtonText: "Ir al login"
+                        }).then(() => {
+                            window.location.href = "<?= BASE_URL ?>/login";
+                        });
+                        return; // corta ejecución
+                    }
+                } catch (e) {
+                    // No era JSON, continuar normal
+                }
+                return response;
+            });
+        };
+
+        // --- Interceptor global para jQuery AJAX ---
+        $(document).ajaxComplete(function (event, xhr) {
+            try {
+                const data = JSON.parse(xhr.responseText);
+                if (data.status === "expired") {
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Sesión expirada",
+                        text: data.mensaje,
+                        confirmButtonText: "Ir al login"
+                    }).then(() => {
+                        window.location.href = "<?= BASE_URL ?>/login";
+                    });
+                }
+            } catch (e) {
+                // No era JSON
+            }
+        });
+
+
         window.skipLoader = false;
 
         // Detectar cuando se envía un form POST

@@ -152,7 +152,7 @@
                     ajax: {
                         url: "<?= BASE_URL ?>/cobros/listar-asignados",
                         dataSrc: function (json) {
-                            console.log("JSON recibido:", json);
+                            // console.log("JSON recibido:", json);
                             return json.data;
                         }
                     },
@@ -184,12 +184,24 @@
                         <?php } ?>
                     ],
                     dom: 'Bfrtip',
+                    // buttons: [
+                    //     {
+                    //         extend: 'colvis',
+                    //         text: '<i class="columns icon"></i> Columnas',
+                    //         collectionLayout: 'fixed two-column',
+                    //         className: 'buttonColumn'
+                    //     }
+                    // ],
+
                     buttons: [
+                        { extend: 'copy', text: 'Copiar' },
+                        { extend: 'excel', text: 'Exportar a Excel' },
+                        { extend: 'pdf', text: 'Exportar a PDF' },
+                        { extend: 'print', text: 'Imprimir' },
                         {
                             extend: 'colvis',
                             text: '<i class="columns icon"></i> Columnas',
-                            collectionLayout: 'fixed two-column',
-                            className: 'buttonColumn'
+                            collectionLayout: 'fixed two-column'
                         }
                     ],
                     language: {
@@ -325,7 +337,7 @@
         })
             .then(r => r.json())
             .then(data => {
-                console.log("Resultados búsqueda:", data);
+                // console.log("Resultados búsqueda:", data);
 
                 // Construir headers dinámicos
                 const headRow = document.getElementById("tabla-busqueda-head");
