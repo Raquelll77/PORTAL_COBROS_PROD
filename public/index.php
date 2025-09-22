@@ -64,11 +64,20 @@ $router->get('/reportes-descargar-promesas', [ReportesController::class, 'descar
 $router->get('/configuracion', [ConfiguracionController::class, 'index'], ['ADMIN', 'SUPERVISOR']);
 $router->get('/configuracion/subir_creditos', [ConfiguracionController::class, 'subir_creditos'], ['ADMIN', 'SUPERVISOR']);
 $router->post('/configuracion/subir_creditos', [ConfiguracionController::class, 'subir_creditos'], ['ADMIN', 'SUPERVISOR']);
+$router->get('/configuracion/listar-creditos', [ConfiguracionController::class, 'listarCreditos'], ['ADMIN', 'SUPERVISOR']);
+$router->get('/configuracion/opciones-creditos', [ConfiguracionController::class, 'obtenerOpciones'], ['ADMIN', 'SUPERVISOR']);
+$router->post('/configuracion/eliminar-credito', [ConfiguracionController::class, 'eliminarCredito'], ['ADMIN', 'SUPERVISOR']);
+$router->post('/configuracion/eliminar-todos-creditos', [ConfiguracionController::class, 'eliminarTodos'], ['ADMIN', 'SUPERVISOR']);
+$router->post('/configuracion/eliminar-por-usuario', [ConfiguracionController::class, 'eliminarPorUsuario'], ['ADMIN', 'SUPERVISOR']);
+
+$router->post('/configuracion/actualizar-credito', [ConfiguracionController::class, 'actualizarCredito'], ['ADMIN', 'SUPERVISOR']);
+
 $router->get('/configuracion/usuarios', [ConfiguracionController::class, 'usuarios'], ['ADMIN']);
 $router->post('/configuracion/usuarios', [ConfiguracionController::class, 'usuarios'], ['ADMIN']);
 $router->post('/configuracion/usuarios-guardar', [ConfiguracionController::class, 'usuariosGuardar'], ['ADMIN']);
 $router->get('/configuracion/usuarios-habilitar', [ConfiguracionController::class, 'usuariosHabilitar'], ['ADMIN']);
 $router->get('/configuracion/usuarios-inhabilitar', [ConfiguracionController::class, 'usuariosInhabilitar'], ['ADMIN']);
+
 
 
 // Comprueba y valida las rutas, que existan y les asigna las funciones del Controlador

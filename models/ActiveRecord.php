@@ -177,6 +177,35 @@ class ActiveRecord
         return self::executeSQL($query, ['id' => $this->id]);
     }
 
+    // Eliminar todos los registros de la tabla
+    public static function eliminarTodos()
+    {
+        $query = "DELETE FROM " . static::$tabla;
+
+        if (self::$is_sqlsrv) {
+            $stmt = self::$active_db->prepare($query);
+            return $stmt->execute();
+        } else {
+            return self::$active_db->query($query);
+        }
+    }
+
+    // Eliminar todos los registros de un usuario específico
+    public static function eliminarPorUsuario($columnaUsuario, $valor)
+    {
+        $query = "DELETE FROM " . static::$tabla . " WHERE {$columnaUsuario} = :valor";
+
+        if (self::$is_sqlsrv) {
+            $stmt = self::$active_db->prepare($query);
+            return $stmt->execute([':valor' => $valor]);
+        } else {
+            $stmt = self::$active_db->prepare("DELETE FROM " . static::$tabla . " WHERE {$columnaUsuario} = ?");
+            $stmt->bind_param("s", $valor);
+            return $stmt->execute();
+        }
+    }
+
+
     public static function consultarSQL($query, $params = [], $isStoredProcedure = false)
     {
         if (self::$is_sqlsrv) {

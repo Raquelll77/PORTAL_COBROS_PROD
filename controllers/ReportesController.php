@@ -20,7 +20,7 @@ class ReportesController
 
         isAuth();
         $router->render('reportes/index', [
-
+            'titulo' => 'Reportes'
         ]);
     }
     public static function gestiones(Router $router)

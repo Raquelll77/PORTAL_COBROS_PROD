@@ -3,7 +3,7 @@ namespace Model;
 
 class PrestamosXGestor extends ActiveRecord
 {
-    protected static $tabla = 'prestamosGestor';
+    protected static $tabla = 'PrestamosGestor';
     protected static $columnasDB = ['id', 'prenumero', 'usuarioCobros', 'nombregestor', 'meta', 'segmento'];
 
 
@@ -19,9 +19,40 @@ class PrestamosXGestor extends ActiveRecord
     {
         $this->id = $args['id'] ?? null;
         $this->prenumero = $args['prenumero'] ?? '';
-        $this->nombre = $args['usuarioCobros'] ?? '';
-        $this->relacion = $args['nombregestor'] ?? '';
-        $this->celular = $args['meta'] ?? '';
-        $this->creado_por = $args['segmento'] ?? '';
+        $this->usuarioCobros = $args['usuarioCobros'] ?? '';
+        $this->nombregestor = $args['nombregestor'] ?? '';
+        $this->meta = $args['meta'] ?? '';
+        $this->segmento = $args['segmento'] ?? '';
+    }
+
+    public static function obtenerSegmentos()
+    {
+        $query = "SELECT DISTINCT segmento FROM " . static::$tabla;
+        $resultados = parent::consultarSQL($query);
+
+        $segmentos = [];
+        foreach ($resultados as $row) {
+            $segmentos[] = $row->segmento;
+        }
+
+        return $segmentos;
+    }
+
+    // Valores únicos de segmentos
+    public static function obtenerUsuarios()
+    {
+        $query = "SELECT DISTINCT usuarioCobros, nombregestor FROM " . static::$tabla;
+        $resultados = parent::consultarSQL($query);
+
+        $usuarios = [];
+        foreach ($resultados as $row) {
+            $usuarios[] = [
+                'usuarioCobros' => $row->usuarioCobros,
+                'nombregestor' => $row->nombregestor,
+            ];
+        }
+
+        return $usuarios;
     }
 }
+

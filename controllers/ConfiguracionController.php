@@ -2,6 +2,8 @@
 
 namespace Controllers;
 
+use Model\ClientesPrestamos;
+use Model\PrestamosXGestor;
 use Model\Usuario;
 use MVC\Router;
 use Model\ActiveRecord;
@@ -52,6 +54,128 @@ class ConfiguracionController
             'status' => $status,
         ]);
     }
+
+    public static function listarCreditos()
+    {
+        isAuth();
+        $prestamos = PrestamosXGestor::all();
+
+        header('Content-Type: application/json');
+        echo json_encode($prestamos);
+        exit;
+    }
+    public static function obtenerOpciones()
+    {
+        isAuth();
+
+        $usuarios = PrestamosXGestor::obtenerUsuarios();
+        $segmentos = PrestamosXGestor::obtenerSegmentos();
+
+        echo json_encode([
+            'success' => true,
+            'usuarios' => $usuarios,
+            'segmentos' => $segmentos
+        ]);
+    }
+
+    public static function eliminarCredito()
+    {
+        isAuth();
+
+        $id = $_POST['id'] ?? null;
+
+        if ($id) {
+            $credito = PrestamosXGestor::find($id);
+            if ($credito) {
+                $credito->eliminar();
+                echo json_encode(['success' => true, 'message' => 'Crédito eliminado']);
+                return;
+            }
+        }
+
+        echo json_encode(['status' => 'error', 'message' => 'No se pudo eliminar']);
+    }
+
+    public static function eliminarTodos()
+    {
+        isAuth();
+
+        $deleted = PrestamosXGestor::eliminarTodos(); // debes crear este método en el modelo
+        if ($deleted) {
+            echo json_encode(['success' => true, 'message' => 'Todos los créditos fueron eliminados']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'No se pudo eliminar la cartera']);
+        }
+    }
+
+    public static function eliminarPorUsuario()
+    {
+        isAuth();
+
+        $usuario = $_POST['usuarioCobros'] ?? null;
+
+        if ($usuario) {
+            // como ya sabes que la columna se llama usuarioCobros, se pasa directo
+            $deleted = PrestamosXGestor::eliminarPorUsuario('usuariocobros', $usuario);
+
+            if ($deleted) {
+                echo json_encode([
+                    'success' => true,
+                    'message' => "Créditos del usuario $usuario eliminados"
+                ]);
+                return;
+            }
+        }
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'No se pudo eliminar créditos del usuario'
+        ]);
+    }
+
+
+
+    public static function actualizarCredito()
+    {
+        isAuth();
+
+        $id = $_POST['id'] ?? null;
+
+        if ($id) {
+            $credito = PrestamosXGestor::find($id);
+
+            if ($credito) {
+                // Actualizar solo si vienen en POST
+                $credito->prenumero = $_POST['prenumero'] ?? $credito->prenumero;
+                $credito->usuarioCobros = $_POST['usuarioCobros'] ?? $credito->usuarioCobros;
+                $credito->nombregestor = $_POST['nombregestor'] ?? $credito->nombregestor;
+                $credito->meta = $_POST['meta'] ?? $credito->meta;
+                $credito->segmento = $_POST['segmento'] ?? $credito->segmento;
+
+                if ($credito->guardar()) {
+                    echo json_encode([
+                        'success' => true,
+                        'message' => 'Crédito actualizado correctamente'
+                    ]);
+                    return;
+                } else {
+                    echo json_encode([
+                        'success' => false,
+                        'message' => 'Error al guardar en la base de datos'
+                    ]);
+                    return;
+                }
+            }
+        }
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'No se encontró el crédito'
+        ]);
+    }
+
+
+
 
     public static function index(Router $router)
     {
