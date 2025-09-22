@@ -21,21 +21,21 @@ $router = new Router();
 $router->get('/', [LoginController::class, 'login'], []);
 $router->post('/', [LoginController::class, 'login'], []);
 $router->get('/logout', [LoginController::class, 'logout']);
-$router->get('/principal', [PrincipalController::class, 'principal'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO']);
+$router->get('/principal', [PrincipalController::class, 'principal'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO', 'JEFECOBROS']);
 
-$router->get('/cobros', [PrincipalController::class, 'buscarPrestamos'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO']);
-$router->post('/cobros', [PrincipalController::class, 'buscarPrestamos'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO']);
-$router->post('/cobros/buscar-prestamos', [PrincipalController::class, 'buscarPrestamosAjax'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO']);
-$router->get('/cobros/listar-asignados', [PrincipalController::class, 'listarAsignados'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO']);
-$router->get('/prestamos/detalle', [PrestamoController::class, 'detalle'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO']);
-$router->post('/prestamos/detalle', [PrestamoController::class, 'detalle'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO']);
-$router->post('/prestamos/guardar-visita', [PrestamoController::class, 'guardarVisita'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO']);
-$router->get('/prestamos/obtener-historial-visitas', [PrestamoController::class, 'obtenerHistorialVisitas'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO']);
-$router->post('/prestamos/guardar-referencia', [PrestamoController::class, 'guardarReferencia'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO']);
-$router->get('/prestamos/obtener-referencias', [PrestamoController::class, 'obtenerReferencias'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO']);
+$router->get('/cobros', [PrincipalController::class, 'buscarPrestamos'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO', 'JEFECOBROS']);
+$router->post('/cobros', [PrincipalController::class, 'buscarPrestamos'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO', 'JEFECOBROS']);
+$router->post('/cobros/buscar-prestamos', [PrincipalController::class, 'buscarPrestamosAjax'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO', 'JEFECOBROS']);
+$router->get('/cobros/listar-asignados', [PrincipalController::class, 'listarAsignados'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO', 'JEFECOBROS']);
+$router->get('/prestamos/detalle', [PrestamoController::class, 'detalle'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO', 'JEFECOBROS']);
+$router->post('/prestamos/detalle', [PrestamoController::class, 'detalle'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO', 'JEFECOBROS']);
+$router->post('/prestamos/guardar-visita', [PrestamoController::class, 'guardarVisita'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO', 'JEFECOBROS']);
+$router->get('/prestamos/obtener-historial-visitas', [PrestamoController::class, 'obtenerHistorialVisitas'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO', 'JEFECOBROS']);
+$router->post('/prestamos/guardar-referencia', [PrestamoController::class, 'guardarReferencia'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO', 'JEFECOBROS']);
+$router->get('/prestamos/obtener-referencias', [PrestamoController::class, 'obtenerReferencias'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO', 'JEFECOBROS']);
 
-$router->get('/prestamos/estado-cuenta', [PrestamoController::class, 'estadoCuentaView'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO']);
-$router->post('/prestamos/editarGestion', [PrestamoController::class, 'editarGestion'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO']);
+$router->get('/prestamos/estado-cuenta', [PrestamoController::class, 'estadoCuentaView'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO', 'JEFECOBROS']);
+$router->post('/prestamos/editarGestion', [PrestamoController::class, 'editarGestion'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO', 'JEFECOBROS']);
 
 
 
@@ -43,34 +43,34 @@ $router->post('/prestamos/editarGestion', [PrestamoController::class, 'editarGes
 
 
 //reportes
-$router->get('/reportes', [ReportesController::class, 'index'], ['ADMIN', 'SUPERVISOR']);
-$router->get('/reportes-gestiones', [ReportesController::class, 'gestiones'], ['ADMIN', 'SUPERVISOR']);
-$router->post('/reportes-gestiones', [ReportesController::class, 'gestiones'], ['ADMIN', 'SUPERVISOR']);
-$router->post('/descargar-gestiones', [ReportesController::class, 'descargarGestiones'], ['ADMIN', 'SUPERVISOR']);
-$router->get('/reportes-recuperacion', [ReportesController::class, 'recuperacion'], ['ADMIN', 'SUPERVISOR']);
-$router->post('/reportes-recuperacion', [ReportesController::class, 'descargarPagos'], ['ADMIN', 'SUPERVISOR']);
-$router->get('/reportes-deterioro', [ReportesController::class, 'deterioro'], ['ADMIN', 'SUPERVISOR']);
-$router->post('/reportes-deterioro', [ReportesController::class, 'descargarReporteDeterioro'], ['ADMIN', 'SUPERVISOR']);
-$router->get('/reportes-asignacion', [ReportesController::class, 'asignacionCartera'], ['ADMIN', 'SUPERVISOR']);
-$router->get('/reportes-promesas', [ReportesController::class, 'vistaPromesas'], ['ADMIN', 'SUPERVISOR']);
-$router->get('/reportes-resumen-promesas', [ReportesController::class, 'resumenPromesas'], ['ADMIN', 'SUPERVISOR']);
-$router->get('/reportes-detalle-promesas', [ReportesController::class, 'detallePromesas'], ['ADMIN', 'SUPERVISOR']);
-$router->get('/reportes-descargar-promesas', [ReportesController::class, 'descargarPromesas'], ['ADMIN', 'SUPERVISOR']);
+$router->get('/reportes', [ReportesController::class, 'index'], ['ADMIN', 'SUPERVISOR', 'JEFECOBROS']);
+$router->get('/reportes-gestiones', [ReportesController::class, 'gestiones'], ['ADMIN', 'SUPERVISOR', 'JEFECOBROS']);
+$router->post('/reportes-gestiones', [ReportesController::class, 'gestiones'], ['ADMIN', 'SUPERVISOR', 'JEFECOBROS']);
+$router->post('/descargar-gestiones', [ReportesController::class, 'descargarGestiones'], ['ADMIN', 'SUPERVISOR', 'JEFECOBROS']);
+$router->get('/reportes-recuperacion', [ReportesController::class, 'recuperacion'], ['ADMIN', 'SUPERVISOR', 'JEFECOBROS']);
+$router->post('/reportes-recuperacion', [ReportesController::class, 'descargarPagos'], ['ADMIN', 'SUPERVISOR', 'JEFECOBROS']);
+$router->get('/reportes-deterioro', [ReportesController::class, 'deterioro'], ['ADMIN', 'SUPERVISOR', 'JEFECOBROS']);
+$router->post('/reportes-deterioro', [ReportesController::class, 'descargarReporteDeterioro'], ['ADMIN', 'SUPERVISOR', 'JEFECOBROS']);
+$router->get('/reportes-asignacion', [ReportesController::class, 'asignacionCartera'], ['ADMIN', 'SUPERVISOR', 'JEFECOBROS']);
+$router->get('/reportes-promesas', [ReportesController::class, 'vistaPromesas'], ['ADMIN', 'SUPERVISOR', 'JEFECOBROS']);
+$router->get('/reportes-resumen-promesas', [ReportesController::class, 'resumenPromesas'], ['ADMIN', 'SUPERVISOR', 'JEFECOBROS']);
+$router->get('/reportes-detalle-promesas', [ReportesController::class, 'detallePromesas'], ['ADMIN', 'SUPERVISOR', 'JEFECOBROS']);
+$router->get('/reportes-descargar-promesas', [ReportesController::class, 'descargarPromesas'], ['ADMIN', 'SUPERVISOR', 'JEFECOBROS']);
 
 
 
 
 //Configuracion
-$router->get('/configuracion', [ConfiguracionController::class, 'index'], ['ADMIN', 'SUPERVISOR']);
-$router->get('/configuracion/subir_creditos', [ConfiguracionController::class, 'subir_creditos'], ['ADMIN', 'SUPERVISOR']);
-$router->post('/configuracion/subir_creditos', [ConfiguracionController::class, 'subir_creditos'], ['ADMIN', 'SUPERVISOR']);
-$router->get('/configuracion/listar-creditos', [ConfiguracionController::class, 'listarCreditos'], ['ADMIN', 'SUPERVISOR']);
-$router->get('/configuracion/opciones-creditos', [ConfiguracionController::class, 'obtenerOpciones'], ['ADMIN', 'SUPERVISOR']);
-$router->post('/configuracion/eliminar-credito', [ConfiguracionController::class, 'eliminarCredito'], ['ADMIN', 'SUPERVISOR']);
-$router->post('/configuracion/eliminar-todos-creditos', [ConfiguracionController::class, 'eliminarTodos'], ['ADMIN', 'SUPERVISOR']);
-$router->post('/configuracion/eliminar-por-usuario', [ConfiguracionController::class, 'eliminarPorUsuario'], ['ADMIN', 'SUPERVISOR']);
+$router->get('/configuracion', [ConfiguracionController::class, 'index'], ['ADMIN', 'JEFECOBROS']);
+$router->get('/configuracion/subir_creditos', [ConfiguracionController::class, 'subir_creditos'], ['ADMIN', 'JEFECOBROS']);
+$router->post('/configuracion/subir_creditos', [ConfiguracionController::class, 'subir_creditos'], ['ADMIN', 'JEFECOBROS']);
+$router->get('/configuracion/listar-creditos', [ConfiguracionController::class, 'listarCreditos'], ['ADMIN', 'JEFECOBROS']);
+$router->get('/configuracion/opciones-creditos', [ConfiguracionController::class, 'obtenerOpciones'], ['ADMIN', 'JEFECOBROS']);
+$router->post('/configuracion/eliminar-credito', [ConfiguracionController::class, 'eliminarCredito'], ['ADMIN', 'JEFECOBROS']);
+$router->post('/configuracion/eliminar-todos-creditos', [ConfiguracionController::class, 'eliminarTodos'], ['ADMIN', 'JEFECOBROS']);
+$router->post('/configuracion/eliminar-por-usuario', [ConfiguracionController::class, 'eliminarPorUsuario'], ['ADMIN', 'JEFECOBROS']);
 
-$router->post('/configuracion/actualizar-credito', [ConfiguracionController::class, 'actualizarCredito'], ['ADMIN', 'SUPERVISOR']);
+$router->post('/configuracion/actualizar-credito', [ConfiguracionController::class, 'actualizarCredito'], ['ADMIN', 'JEFECOBROS']);
 
 $router->get('/configuracion/usuarios', [ConfiguracionController::class, 'usuarios'], ['ADMIN']);
 $router->post('/configuracion/usuarios', [ConfiguracionController::class, 'usuarios'], ['ADMIN']);

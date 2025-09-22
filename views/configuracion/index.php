@@ -4,8 +4,9 @@ $menuOpciones = [
 
     ],
     'SUPERVISOR' => [
-        // ['ruta' => '/reportes', 'icono' => 'file alternate outline icon', 'texto' => 'Reportes'],
-        // ['ruta' => '/cobros', 'icono' => 'hand holding usd icon', 'texto' => 'Cobros'],
+
+    ],
+    'JEFECOBROS' => [
         ['ruta' => '/configuracion/subir_creditos', 'icono' => 'upload black icon', 'texto' => 'Subir Creditos X Gestor'],
     ],
     'ADMIN' => [
