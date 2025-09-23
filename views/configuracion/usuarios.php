@@ -108,6 +108,7 @@
                                 <option value="ADMIN">ADMIN</option>
                                 <option value="SUPERVISOR">SUPERVISOR</option>
                                 <option value="TELECOBRO">TELECOBRO</option>
+                                <option value="JEFECOBROS">JEFECOBROS</option>
                             </select>
                         </div>
                     </div>
