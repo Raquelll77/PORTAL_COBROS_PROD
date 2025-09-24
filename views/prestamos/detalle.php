@@ -299,7 +299,7 @@
                     </div>
                     <div class="campo">
                         <label for="">Monto Promesa</label>
-                        <input type="number" placeholder="ejem: L3000" id="montoPromesa" name="montoPromesa" disabled
+                        <input type="text" placeholder="ejem: L3000" id="montoPromesa" name="montoPromesa" disabled
                             required>
                     </div>
                     <div class="campo">
@@ -607,6 +607,16 @@
     // elimina cualquier carácter que no sea número mientras escriben
     document.getElementById("numeroContactado").addEventListener("input", function () {
         this.value = this.value.replace(/\D/g, "");
+    });
+
+    document.getElementById("montoPromesa").addEventListener("input", function () {
+        // quitar todo lo que no sea dígito o punto
+        this.value = this.value.replace(/[^0-9.]/g, '');
+
+        // si hay más de un punto, conservar solo el primero
+        if ((this.value.match(/\./g) || []).length > 1) {
+            this.value = this.value.substring(0, this.value.length - 1);
+        }
     });
 
     // === Render historial con expiración de botón ===
