@@ -304,7 +304,8 @@
                     </div>
                     <div class="campo">
                         <label for="">Numero Contactado</label>
-                        <input type="number" placeholder="ejem: 89893212" name="numeroContactado" required>
+                        <input type="text" placeholder="ejem: 89893212" name="numeroContactado" id="numeroContactado"
+                            required>
                     </div>
 
                 </div>
@@ -571,6 +572,11 @@
             fechaPromesa.disabled = true;
             montoPromesa.disabled = true;
         }
+    });
+
+    // elimina cualquier carácter que no sea número mientras escriben
+    document.getElementById("numeroContactado").addEventListener("input", function () {
+        this.value = this.value.replace(/\D/g, "");
     });
 
     // === Render historial con expiración de botón ===
