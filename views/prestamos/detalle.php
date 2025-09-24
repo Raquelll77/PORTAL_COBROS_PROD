@@ -514,6 +514,30 @@
         const cp = document.getElementById('comentarioPermanente');
         if (cp) data.set('comentarioPermanente', cp.value);
 
+        // === Validaciones extra ===
+        const codigo = document.getElementById("codigoResultado").value;
+        const montoPromesaInput = document.getElementById("montoPromesa");
+        const montoPromesa = parseFloat(montoPromesaInput.value) || 0;
+
+        if (codigosPositivos.includes(codigo)) {
+            if (montoPromesa <= 0) {
+                Swal.fire("Error", "El monto de promesa debe ser mayor a 0", "error");
+                return;
+            }
+
+            if (montoPromesa > 500000) {
+                Swal.fire("Error", "Favor ingrese un monto de promesa valido", "error");
+                return;
+            }
+
+            // Evitar que metan números de teléfono (8–10 dígitos enteros)
+            if (/^\d{8,10}$/.test(montoPromesaInput.value)) {
+                Swal.fire("Error", "El monto de promesa no puede ser un número de teléfono", "error");
+                return;
+            }
+        }
+
+        // === Si pasa validaciones, enviar ===
         Swal.fire({
             title: "Guardando gestión...",
             text: "Por favor espera mientras procesamos los datos.",
@@ -553,6 +577,12 @@
                 Swal.fire({ icon: 'error', title: 'Error', text: err.message });
             });
     }
+
+
+
+
+
+
 
     document.getElementById('form-gestion').addEventListener('submit', e => {
         e.preventDefault();
@@ -740,6 +770,8 @@
                         Swal.showValidationMessage("Todos los campos obligatorios deben estar llenos");
                         return false;
                     }
+
+
 
                     return {
                         id,
