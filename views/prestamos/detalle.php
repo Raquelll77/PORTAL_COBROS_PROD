@@ -665,7 +665,7 @@
                         value="${e.target.dataset.monto || ''}" disabled>
 
                     <label for="editNumeroContactado"><strong>Número Contactado</strong></label>
-                    <input id="editNumeroContactado" type="number" class="swal2-input"
+                    <input id="editNumeroContactado" type="text" class="swal2-input"
                         placeholder="ejem: 88889999" style="width: 90%;"
                         value="${e.target.dataset.numero || ''}" required>
 
@@ -678,6 +678,12 @@
                 didOpen: () => {
                     // seleccionar valor actual
                     document.getElementById("editCodigoResultado").value = e.target.dataset.codigo || '';
+                    const inputNumero = document.getElementById("editNumeroContactado");
+                    if (inputNumero) {
+                        inputNumero.addEventListener("input", function () {
+                            this.value = this.value.replace(/\D/g, "");
+                        });
+                    }
 
                     const fechaPromesa = document.getElementById("editFechaPromesa");
                     const montoPromesa = document.getElementById("editMontoPromesa");
