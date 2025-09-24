@@ -300,8 +300,8 @@
                     d.fecha_creacion || "",
                     d.fecha_promesa || "",
                     d.codigo_resultado || "",
-                    d.montoPromesa || "",
-                    d.TotalPagado || "",
+                    parseFloat(d.montoPromesa) || 0,   // número
+                    parseFloat(d.TotalPagado) || 0,
                     d.estado_promesa || "",
                     d.creado_por || ""
                 ]);
@@ -344,8 +344,8 @@
                         d.fecha_creacion || "",
                         d.fecha_promesa || "",
                         d.codigo_resultado || "",
-                        d.montoPromesa || "",
-                        d.TotalPagado || "",
+                        parseFloat(d.montoPromesa) || 0,   // número
+                        parseFloat(d.TotalPagado) || 0,
                         d.estado_promesa || "",
                         d.creado_por || ""
                     ]);
