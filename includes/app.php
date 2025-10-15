@@ -6,6 +6,10 @@ require __DIR__ . '/../vendor/autoload.php';
 // config.php
 define('BASE_URL', '/PORTAL-COBROS/public');
 
+define('ULTRAMSG_TOKEN', 'nph5qqc84jt1cvge');
+define('ULTRAMSG_INSTANCE', 'instance41959');
+
+
 
 // Conectarnos a la base de datos
 use Model\ActiveRecord;

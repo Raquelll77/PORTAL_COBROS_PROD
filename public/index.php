@@ -2,6 +2,8 @@
 
 use Controllers\ConfiguracionController;
 use Controllers\GestionController;
+use Controllers\NotificacionesController;
+use Controllers\NotificacionesGestorController;
 use Controllers\ReportesController;
 date_default_timezone_set('America/Tegucigalpa');
 ini_set('max_execution_time', 0); // Tiempo ilimitado
@@ -77,6 +79,13 @@ $router->post('/configuracion/usuarios', [ConfiguracionController::class, 'usuar
 $router->post('/configuracion/usuarios-guardar', [ConfiguracionController::class, 'usuariosGuardar'], ['ADMIN']);
 $router->get('/configuracion/usuarios-habilitar', [ConfiguracionController::class, 'usuariosHabilitar'], ['ADMIN']);
 $router->get('/configuracion/usuarios-inhabilitar', [ConfiguracionController::class, 'usuariosInhabilitar'], ['ADMIN']);
+
+
+
+//NOTIFICACIONES
+$router->get('/notificaciones/promesas', [NotificacionesGestorController::class, 'enviarPromesasHoy'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO', 'JEFECOBROS']);
+$router->get('/notificaciones/recordatorios', [NotificacionesGestorController::class, 'enviarRecordatorios'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO', 'JEFECOBROS']);
+
 
 
 

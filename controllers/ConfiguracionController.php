@@ -8,6 +8,8 @@ use Model\Usuario;
 use MVC\Router;
 use Model\ActiveRecord;
 use Clases\Upload;
+use Model\NotificacionesGestor;
+
 
 class ConfiguracionController
 {
