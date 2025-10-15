@@ -99,7 +99,7 @@ class NotificacionesGestorController
                 $gestor->telefono,
                 $gestor->nombre,
                 $mensaje,
-                "https://web.grupomovesa.com/portal/login.php"
+                "https://web.grupomovesa.com/PORTAL-COBROS.php"
             );
 
             // Enviar correo
