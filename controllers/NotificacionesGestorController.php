@@ -165,4 +165,72 @@ class NotificacionesGestorController
             error_log("❌ Error enviando correo a {$correo}: " . $mail->ErrorInfo);
         }
     }
+    // 🔹 Versión automática sin login, protegida por token
+    public static function enviarPromesasHoyAuto()
+    {
+        // ✅ Token secreto (guárdalo en tu .env o cámbialo por uno bien largo y aleatorio)
+        $expectedToken = '5K9@2025';
+
+        // Obtener token de la URL
+        $token = $_GET['token'] ?? '';
+
+        // Si no hay token o no coincide → rechazar
+        if (!$token || !hash_equals($expectedToken, $token)) {
+            http_response_code(401);
+            echo json_encode([
+                'status' => false,
+                'mensaje' => '❌ Token inválido o no autorizado.'
+            ]);
+            return;
+        }
+
+        // ✅ Ahora ejecutar el mismo proceso sin pedir login
+        NotificacionesGestor::useSQLSrv();
+
+        $gestores = NotificacionesGestor::obtenerGestoresPromesasHoy();
+
+        if (empty($gestores)) {
+            echo json_encode([
+                'status' => true,
+                'mensaje' => '✅ No hay promesas de pago para hoy.'
+            ]);
+            return;
+        }
+
+        foreach ($gestores as $gestor) {
+            $detalleClientes = NotificacionesGestor::obtenerDetallePromesasHoyPorGestor($gestor->nombre);
+
+            $listaClientes = "";
+            foreach ($detalleClientes as $detalle) {
+                $monto = number_format($detalle->montoPromesa ?? 0, 2);
+                $listaClientes .= "• {$detalle->prenumero} - {$detalle->nombre_cliente} (L {$monto})\n";
+            }
+
+            if (empty($listaClientes)) {
+                $listaClientes = "(Sin detalles disponibles)";
+            }
+
+            $mensaje = "Tienes {$gestor->total_clientes} clientes con promesas de pago para hoy:\n\n{$listaClientes}\nIngresa al portal para revisarlos.";
+
+            self::enviarWhatsApp(
+                $gestor->telefono,
+                $gestor->nombre,
+                $mensaje,
+                "https://web.grupomovesa.com/portal/login.php"
+            );
+
+            self::enviarEmail(
+                $gestor->correo,
+                $gestor->nombre,
+                "Promesas de pago para hoy",
+                nl2br($mensaje)
+            );
+        }
+
+        echo json_encode([
+            'status' => true,
+            'mensaje' => '✅ Notificaciones automáticas enviadas correctamente.'
+        ]);
+    }
+
 }

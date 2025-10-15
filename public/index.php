@@ -86,6 +86,9 @@ $router->get('/configuracion/usuarios-inhabilitar', [ConfiguracionController::cl
 $router->get('/notificaciones/promesas', [NotificacionesGestorController::class, 'enviarPromesasHoy'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO', 'JEFECOBROS']);
 $router->get('/notificaciones/recordatorios', [NotificacionesGestorController::class, 'enviarRecordatorios'], ['ADMIN', 'SUPERVISOR', 'TELECOBRO', 'JEFECOBROS']);
 
+// Ruta pública protegida por token (no requiere login)
+$router->get('/notificaciones/promesas/auto', [NotificacionesGestorController::class, 'enviarPromesasHoyAuto']);
+
 
 
 
