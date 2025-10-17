@@ -2,14 +2,11 @@
 
 namespace Controllers;
 
-use Model\ClientesPrestamos;
 use Model\PrestamosXGestor;
 use Model\Usuario;
 use MVC\Router;
 use Model\ActiveRecord;
 use Clases\Upload;
-use Model\NotificacionesGestor;
-
 
 class ConfiguracionController
 {

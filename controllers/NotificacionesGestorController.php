@@ -115,7 +115,7 @@ class NotificacionesGestorController
         echo json_encode(['status' => true, 'mensaje' => '✅ Recordatorios enviados.']);
     }
 
-    // 🧩 Función interna para enviar WhatsApp
+    // Función interna para enviar WhatsApp
     private static function enviarWhatsApp($telefono, $nombre, $mensaje, $link = "")
     {
         if (empty($telefono)) {
@@ -123,8 +123,8 @@ class NotificacionesGestorController
             return;
         }
 
-        $token = "nph5qqc84jt1cvge";       // Token UltraMsg
-        $instance_id = "instance41959";    // ID de instancia UltraMsg
+        $token = ULTRAMSG_TOKEN;       // Token UltraMsg
+        $instance_id = ULTRAMSG_INSTANCE;    // ID de instancia UltraMsg
         $client = new UltraMsg($token, $instance_id);
 
         $to = "504" . preg_replace('/[^0-9]/', '', $telefono);
@@ -137,7 +137,7 @@ class NotificacionesGestorController
         }
     }
 
-    // 🧩 Función interna para enviar correo
+    // Función interna para enviar correo
     private static function enviarEmail($correo, $nombre, $asunto, $mensaje)
     {
         if (empty($correo))
@@ -165,10 +165,11 @@ class NotificacionesGestorController
             error_log("❌ Error enviando correo a {$correo}: " . $mail->ErrorInfo);
         }
     }
-    // 🔹 Versión automática sin login, protegida por token
+
+    //Versión automática sin login, protegida por token
     public static function enviarPromesasHoyAuto()
     {
-        // ✅ Token secreto (guárdalo en tu .env o cámbialo por uno bien largo y aleatorio)
+
         $expectedToken = '5K9@2025';
 
         // Obtener token de la URL
@@ -184,7 +185,7 @@ class NotificacionesGestorController
             return;
         }
 
-        // ✅ Ahora ejecutar el mismo proceso sin pedir login
+
         NotificacionesGestor::useSQLSrv();
 
         $gestores = NotificacionesGestor::obtenerGestoresPromesasHoy();
