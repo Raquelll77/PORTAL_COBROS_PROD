@@ -383,6 +383,15 @@
             });
     });
 
+    document.addEventListener('DOMContentLoaded', function () {
+        const activeTab = '<?= $tab ?>';
+
+        if (activeTab === 'clientes-asignados' && !tablaAsignados) {
+
+            const btn = document.querySelector('.tab-button[data-tab="clientes-asignados"]');
+            if (btn) btn.click();
+        }
+    });
 
 
 
