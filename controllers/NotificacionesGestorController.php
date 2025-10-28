@@ -48,7 +48,7 @@ class NotificacionesGestorController
                 $gestor->telefono,
                 $gestor->nombre,
                 $mensaje,
-                "https://web.grupomovesa.com/portal/login.php"
+                "https://web.grupomovesa.com/PORTAL-COBROS"
             );
 
             // Enviar correo
@@ -64,7 +64,7 @@ class NotificacionesGestorController
     }
 
 
-    // 🔹 Envía recordatorios al mediodía si no han gestionado
+    //  Envía recordatorios al mediodía si no han gestionado
     public static function enviarRecordatorios(Router $router)
     {
         isAuth();
@@ -167,15 +167,12 @@ class NotificacionesGestorController
     }
 
     //Versión automática sin login, protegida por token
+    //Versión automática sin login, protegida por token
     public static function enviarPromesasHoyAuto()
     {
-
         $expectedToken = '5K9@2025';
-
-        // Obtener token de la URL
         $token = $_GET['token'] ?? '';
 
-        // Si no hay token o no coincide → rechazar
         if (!$token || !hash_equals($expectedToken, $token)) {
             http_response_code(401);
             echo json_encode([
@@ -184,7 +181,6 @@ class NotificacionesGestorController
             ]);
             return;
         }
-
 
         NotificacionesGestor::useSQLSrv();
 
@@ -198,7 +194,13 @@ class NotificacionesGestorController
             return;
         }
 
+        // Aquí almacenaremos todo el resumen general (para el correo)
+        $resumenGeneral = "";
+        // Y este resumen breve servirá para WhatsApp
+        $resumenWhatsApp = "📋 *Resumen de Promesas de Pago - " . date('d/m/Y') . "*\n\n";
+
         foreach ($gestores as $gestor) {
+
             $detalleClientes = NotificacionesGestor::obtenerDetallePromesasHoyPorGestor($gestor->nombre);
 
             $listaClientes = "";
@@ -211,13 +213,15 @@ class NotificacionesGestorController
                 $listaClientes = "(Sin detalles disponibles)";
             }
 
+            // Mensaje individual del gestor
             $mensaje = "Tienes {$gestor->total_clientes} clientes con promesas de pago para hoy:\n\n{$listaClientes}\nIngresa al portal para revisarlos.";
 
+            // Envío normal a cada gestor
             self::enviarWhatsApp(
                 $gestor->telefono,
                 $gestor->nombre,
                 $mensaje,
-                "https://web.grupomovesa.com/portal/login.php"
+                "https://web.grupomovesa.com/PORTAL-COBROS"
             );
 
             self::enviarEmail(
@@ -226,12 +230,51 @@ class NotificacionesGestorController
                 "Promesas de pago para hoy",
                 nl2br($mensaje)
             );
+
+            // Agregar esta sección al resumen general (para correo)
+            $resumenGeneral .= "<h3>Gestor: {$gestor->nombre}</h3>";
+            $resumenGeneral .= "<p><strong>Total clientes:</strong> {$gestor->total_clientes}</p>";
+            $resumenGeneral .= "<pre style='background:#f5f5f5;padding:8px;border-radius:5px;border:1px solid #ccc'>{$listaClientes}</pre><br>";
+
+            // Agregar resumen breve para WhatsApp
+            $resumenWhatsApp .= "👤 *{$gestor->nombre}*: {$gestor->total_clientes} promesas\n";
+        }
+
+        // 📧 Correos de supervisión
+        $correosSupervision = [
+            'tcabrera@skgcredit.com',
+            'sgcobranza@skgcredit.com'
+        ];
+
+        // 📱 Teléfonos de supervisión (formato nacional sin +504)
+        $telefonosSupervision = [
+            '31440901', // 👉 reemplazar con el número real de Tcabrera
+            '31755103'  // 👉 reemplazar con el número real de Sgcobranza
+        ];
+
+        // 🔹 Enviar correo consolidado a supervisores
+        foreach ($correosSupervision as $correo) {
+            self::enviarEmail(
+                $correo,
+                'Supervisión de Cobros',
+                'Resumen diario de promesas de pago por gestor',
+                "<h2>Resumen de Promesas de Pago - " . date('d/m/Y') . "</h2>" . $resumenGeneral
+            );
+        }
+
+        // 🔹 Enviar WhatsApp consolidado a supervisores
+        foreach ($telefonosSupervision as $telefono) {
+            self::enviarWhatsApp(
+                $telefono,
+                'Supervisión',
+                $resumenWhatsApp,
+                "https://web.grupomovesa.com/PORTAL-COBROS"
+            );
         }
 
         echo json_encode([
             'status' => true,
-            'mensaje' => '✅ Notificaciones automáticas enviadas correctamente.'
+            'mensaje' => '✅ Notificaciones automáticas enviadas correctamente (incluye resumen por correo y WhatsApp a supervisores).'
         ]);
     }
-
 }
