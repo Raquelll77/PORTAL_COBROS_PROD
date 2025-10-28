@@ -25,7 +25,10 @@
                 rel="noopener">
                 Ver estado de cuenta
             </a>
+
         </div>
+
+
 
 
         <h1 class="titulo-detalle">Informacion del Préstamo</h1>
@@ -251,10 +254,39 @@
             </div>
         </section>
 
+        <br>
+        <?php
+        $rolUsuario = $_SESSION['PORTAL_COBROS']['rol'] ?? '';
+        $cuentaCancelada = false;
+
+        // ✅ Si no hay registros en saldoPrestamo, asumimos que está cancelada
+        if (empty($saldoPrestamo)) {
+            $cuentaCancelada = true;
+        } else {
+            // Si viene saldo, revisa si el saldo capital es <= 0 por si acaso
+            $primerSaldo = $saldoPrestamo[0] ?? [];
+            if (isset($primerSaldo['Saldo Capital']) && floatval($primerSaldo['Saldo Capital']) <= 0) {
+                $cuentaCancelada = true;
+            }
+        }
+
+        // ✅ Mostrar solo si el rol aplica y la cuenta está cancelada
+        if ($cuentaCancelada && in_array($rolUsuario, ['JEFECOBROS', 'ADMIN'])): ?>
+            <a href="#" class="boton-finiquito" id="btn-descargar-finiquito">
+                Descargar Finiquito
+            </a>
+        <?php endif; ?>
+
+
+
+        <iframe id="iframe-finiquito" style="display:none;"></iframe>
+
         <h3>Comentario Permanente:</h3>
 
         <textarea class="comentarioPermanente" id="comentarioPermanente" name="comentarioPermanente"><?= htmlspecialchars($comentarioPermanente->comentario ?? '') ?>
         </textarea>
+
+
 
 
         <!-- Pestañas -->
@@ -827,5 +859,23 @@
                 }
             });
         }
+    });
+
+    document.getElementById('btn-descargar-finiquito').addEventListener('click', function (e) {
+        e.preventDefault();
+
+        Swal.fire({
+            title: "Generando finiquito...",
+            text: "Por favor espera mientras se descarga el PDF.",
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        // disparar la descarga sin recargar
+        const iframe = document.getElementById('iframe-finiquito');
+        iframe.src = "<?= BASE_URL ?>/detalle/finiquito?serie=<?= urlencode($_GET['serie'] ?? '') ?>&descargar=1";
+
+        // simular cierre del loader después de unos segundos
+        setTimeout(() => Swal.close(), 3500);
     });
 </script>

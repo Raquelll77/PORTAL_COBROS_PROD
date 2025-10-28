@@ -33,3 +33,17 @@ try {
 } catch (PDOException $e) {
     die("Error en la conexión a SQL Server: " . $e->getMessage());
 }
+
+
+
+// Conexión a SQL Server SAP MOVESA usando PDO
+$sqlsrv_db3 = "sqlsrv:Server=192.168.1.3;Database=MOVESA";
+$sqlsrv_user3 = 'Consultor01';
+$sqlsrv_password3 = 'Sql1sapphp@!';
+
+try {
+    $sqlsrv_conn3 = new PDO($sqlsrv_db3, $sqlsrv_user3, $sqlsrv_password3);
+    $sqlsrv_conn3->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Error en la conexión a SQL Server: " . $e->getMessage());
+}

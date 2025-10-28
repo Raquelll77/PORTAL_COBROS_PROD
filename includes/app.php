@@ -18,6 +18,7 @@ use Model\Usuario;
 ActiveRecord::setMySQLDB($mysql_db);     // Configurar la conexión a MySQL
 ActiveRecord::setSQLSrvDB($sqlsrv_conn); // Configurar la conexión a SQL Server
 ActiveRecord::setSQLSrvDB2($sqlsrv_conn2);
+ActiveRecord::setSQLSrvDB3($sqlsrv_conn3); //MOVESA
 // Puedes elegir la conexión activa
 ActiveRecord::useMySQL(); // O usa ActiveRecord::useSQLSrv() para cambiar entre bases de datos
 

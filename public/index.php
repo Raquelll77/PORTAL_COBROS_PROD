@@ -1,6 +1,7 @@
 <?php
 
 use Controllers\ConfiguracionController;
+use Controllers\FiniquitoController;
 use Controllers\GestionController;
 use Controllers\NotificacionesController;
 use Controllers\NotificacionesGestorController;
@@ -88,6 +89,12 @@ $router->get('/notificaciones/recordatorios', [NotificacionesGestorController::c
 
 // Ruta pública protegida por token (no requiere login)
 $router->get('/notificaciones/promesas/auto', [NotificacionesGestorController::class, 'enviarPromesasHoyAuto']);
+
+
+//PLANTILLAS
+
+$router->get('/detalle/finiquito', [FiniquitoController::class, 'generar']);
+
 
 
 

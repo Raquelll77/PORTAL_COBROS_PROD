@@ -8,6 +8,7 @@ class ActiveRecord
     protected static $mysql_db;
     protected static $sqlsrv_db;
     protected static $sqlsrv_db2; // Nueva conexión
+    protected static $sqlsrv_db3;
     protected static $active_db;
     protected static $is_sqlsrv = false; // Determina si estamos usando SQL Server (PDO)
 
@@ -34,6 +35,11 @@ class ActiveRecord
         self::$sqlsrv_db2 = $database;
     }
 
+    public static function setSQLSrvDB3($database)
+    {
+        self::$sqlsrv_db3 = $database;
+    }
+
     // Cambiar la conexión activa a MySQL
     public static function useMySQL()
     {
@@ -52,6 +58,12 @@ class ActiveRecord
     public static function useSQLSrv2()
     {
         self::$active_db = self::$sqlsrv_db2;
+        self::$is_sqlsrv = true;
+    }
+
+    public static function useSQLSrv3()
+    {
+        self::$active_db = self::$sqlsrv_db3;
         self::$is_sqlsrv = true;
     }
 

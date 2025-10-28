@@ -416,3 +416,26 @@ table td, table th {
    
 }
 
+.boton-finiquito {
+    background-color: darken(v.$cyan, 15%); // tono más fuerte del cyan
+    color: v.$blanco;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: inline-block;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+
+    &:hover {
+        background-color: darken(v.$cyan, 30%);
+        color: v.$blanco;
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+}
