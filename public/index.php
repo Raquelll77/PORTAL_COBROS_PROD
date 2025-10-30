@@ -96,6 +96,7 @@ $router->get('/notificaciones/promesas/auto', [NotificacionesGestorController::c
 $router->get('/detalle/finiquito', [FiniquitoController::class, 'generarFiniquito']);
 $router->get('/detalle/carta-decomiso', [FiniquitoController::class, 'generarCartaDecomiso']);
 $router->get('/detalle/carta-devolucion', [FiniquitoController::class, 'generarCartaDevolucion']);
+$router->get('/detalle/constancia-consolidada', [FiniquitoController::class, 'generarConstancia']);
 
 
 

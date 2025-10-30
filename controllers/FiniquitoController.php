@@ -1,6 +1,7 @@
 <?php
 namespace Controllers;
 
+use Model\ClientesPrestamos;
 use MVC\Router;
 use Model\Finiquito;
 use Dompdf\Dompdf;
@@ -77,6 +78,31 @@ class FiniquitoController
         }
     }
 
+    public static function generarConstancia(Router $router)
+    {
+        $serie = $_GET['serie'] ?? '';
+        $prenumero = $_GET['prenumero'] ?? '';
+        $saldoPrestamo = ClientesPrestamos::getSaldoClientes($prenumero);
+
+        if (!$serie) {
+            $router->render('errores/falta_serie', [
+                'mensaje' => 'Debe proporcionar una serie en la URL'
+            ]);
+            return;
+        }
+
+        try {
+            // Pasa los datos extra al método base
+            self::generarPDF($serie, 'constancia_consolidacion', "CONSTANCIA_CONSOLIDADA_$serie.pdf", [
+                'saldo' => $saldoPrestamo
+            ]);
+        } catch (\Exception $e) {
+            $router->render('errores/no_encontrado', [
+                'mensaje' => $e->getMessage()
+            ]);
+        }
+    }
+
 
     // 🧩 Función base que genera y descarga el PDF
     private static function generarPDF(string $serie, string $vista, string $nombreArchivo, array $extras = [])
@@ -99,6 +125,7 @@ class FiniquitoController
             'fondo' => $fondo,
             'prenumero' => $extras['prenumero'] ?? '',
             'gestor' => $extras['gestor'] ?? '',
+            'saldo' => $extras['saldo'] ?? [],
         ];
 
         // ✅ Esto crea variables locales a partir de las claves del array

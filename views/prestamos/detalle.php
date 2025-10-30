@@ -291,6 +291,11 @@
                 style="margin-left:10px; background-color:#6c5ce7;">
                 Carta de Devolución
             </a>
+
+            <a href="#" class="boton-finiquito" id="btn-descargar-constancia"
+                style="margin-left:10px; background-color:#6c6ce7;">
+                Constancia Consolidada
+            </a>
         <?php } ?>
 
 
@@ -298,6 +303,7 @@
         <iframe id="iframe-finiquito" style="display:none;"></iframe>
         <iframe id="iframe-decomiso" style="display:none;"></iframe>
         <iframe id="iframe-devolucion" style="display:none;"></iframe>
+        <iframe id="iframe-constancia" style="display:none;"></iframe>
 
 
         <h3>Comentario Permanente:</h3>
@@ -949,6 +955,24 @@
         // disparar la descarga sin recargar
         const iframe = document.getElementById('iframe-devolucion');
         iframe.src = "<?= BASE_URL ?>/detalle/carta-devolucion?serie=<?= urlencode($_GET['serie'] ?? '') ?>&descargar=1";
+
+        // simular cierre del loader después de unos segundos
+        setTimeout(() => Swal.close(), 3500);
+    });
+
+    document.getElementById('btn-descargar-constancia')?.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        Swal.fire({
+            title: "Generando Constancia...",
+            text: "Por favor espera mientras se descarga el PDF.",
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        // disparar la descarga sin recargar
+        const iframe = document.getElementById('iframe-constancia');
+        iframe.src = "<?= BASE_URL ?>/detalle/constancia-consolidada?serie=<?= urlencode($_GET['serie'] ?? '') ?>&prenumero=<?= urlencode($_GET['prenumero'] ?? '') ?>&descargar=1";
 
         // simular cierre del loader después de unos segundos
         setTimeout(() => Swal.close(), 3500);
