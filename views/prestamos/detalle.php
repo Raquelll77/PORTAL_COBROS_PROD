@@ -270,16 +270,35 @@
             }
         }
 
-        // ✅ Mostrar solo si el rol aplica y la cuenta está cancelada
-        if ($cuentaCancelada && in_array($rolUsuario, ['JEFECOBROS', 'ADMIN'])): ?>
+
+        $rolUsuario = $_SESSION['PORTAL_COBROS']['rol'] ?? '';
+
+        // ✅ Mostrar Finiquito solo si está cancelada
+        if ($cuentaCancelada && in_array($rolUsuario, ['JEFECOBROS', 'ADMIN'])) { ?>
             <a href="#" class="boton-finiquito" id="btn-descargar-finiquito">
                 Descargar Finiquito
             </a>
-        <?php endif; ?>
+        <?php } ?>
+
+        <?php
+
+        if (in_array($rolUsuario, ['JEFECOBROS', 'ADMIN'])) { ?>
+            <a href="#" class="boton-finiquito" id="btn-descargar-decomiso" style="margin-left:10px;">
+                Carta de Decomiso
+            </a>
+
+            <a href="#" class="boton-finiquito" id="btn-descargar-devolucion"
+                style="margin-left:10px; background-color:#6c5ce7;">
+                Carta de Devolución
+            </a>
+        <?php } ?>
 
 
 
         <iframe id="iframe-finiquito" style="display:none;"></iframe>
+        <iframe id="iframe-decomiso" style="display:none;"></iframe>
+        <iframe id="iframe-devolucion" style="display:none;"></iframe>
+
 
         <h3>Comentario Permanente:</h3>
 
@@ -861,7 +880,7 @@
         }
     });
 
-    document.getElementById('btn-descargar-finiquito').addEventListener('click', function (e) {
+    document.getElementById('btn-descargar-finiquito')?.addEventListener('click', function (e) {
         e.preventDefault();
 
         Swal.fire({
@@ -878,4 +897,61 @@
         // simular cierre del loader después de unos segundos
         setTimeout(() => Swal.close(), 3500);
     });
+
+
+    const btnDecomiso = document.getElementById('btn-descargar-decomiso');
+    if (btnDecomiso) {
+        btnDecomiso.addEventListener('click', async function (e) {
+            e.preventDefault();
+
+            const { value: nombreGestor } = await Swal.fire({
+                title: "Nombre del Gestor",
+                input: "text",
+                inputLabel: "Escriba el nombre completo del gestor que realizará el decomiso",
+                inputPlaceholder: "Ej: Juan Pérez",
+                confirmButtonText: "Generar Carta",
+                showCancelButton: true,
+                cancelButtonText: "Cancelar",
+                inputValidator: (value) => {
+                    if (!value) {
+                        return "Debe ingresar el nombre del gestor";
+                    }
+                }
+            });
+
+            if (!nombreGestor) return; // si cancela o deja vacío
+
+            Swal.fire({
+                title: "Generando carta de decomiso...",
+                text: "Por favor espera mientras se descarga el PDF.",
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            // Disparar descarga con el nombre del gestor incluido
+            const iframe = document.getElementById('iframe-decomiso');
+            iframe.src = "<?= BASE_URL ?>/detalle/carta-decomiso?serie=<?= urlencode($_GET['serie'] ?? '') ?>&prenumero=<?= urlencode($_GET['prenumero'] ?? '') ?>&gestor=" + encodeURIComponent(nombreGestor);
+
+            setTimeout(() => Swal.close(), 3500);
+        });
+    }
+
+    document.getElementById('btn-descargar-devolucion')?.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        Swal.fire({
+            title: "Generando Nota Devolucion...",
+            text: "Por favor espera mientras se descarga el PDF.",
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        // disparar la descarga sin recargar
+        const iframe = document.getElementById('iframe-devolucion');
+        iframe.src = "<?= BASE_URL ?>/detalle/carta-devolucion?serie=<?= urlencode($_GET['serie'] ?? '') ?>&descargar=1";
+
+        // simular cierre del loader después de unos segundos
+        setTimeout(() => Swal.close(), 3500);
+    });
+
 </script>

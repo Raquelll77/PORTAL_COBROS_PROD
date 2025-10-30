@@ -8,7 +8,8 @@ use Dompdf\Options;
 
 class FiniquitoController
 {
-    public static function generar(Router $router)
+    // 📄 Generar finiquito
+    public static function generarFiniquito(Router $router)
     {
         $serie = $_GET['serie'] ?? '';
 
@@ -19,43 +20,105 @@ class FiniquitoController
             return;
         }
 
-        $finiquito = Finiquito::obtenerPorSerie($serie);
-
-        if (!$finiquito) {
+        try {
+            self::generarPDF($serie, 'finiquito', "FINIQUITO_$serie.pdf");
+        } catch (\Exception $e) {
             $router->render('errores/no_encontrado', [
-                'mensaje' => "No se encontró información para la serie: $serie"
+                'mensaje' => $e->getMessage()
+            ]);
+        }
+    }
+
+    // 📄 Generar carta de decomiso
+    public static function generarCartaDecomiso(Router $router)
+    {
+        $serie = $_GET['serie'] ?? '';
+        $prenumero = $_GET['prenumero'] ?? '';
+        $gestor = $_GET['gestor'] ?? '';
+
+        if (!$serie) {
+            $router->render('errores/falta_serie', [
+                'mensaje' => 'Debe proporcionar una serie en la URL'
             ]);
             return;
         }
 
-        // 📄 Renderizamos la plantilla HTML en memoria (sin mostrarla)
-        $backgroundPath = 'C:/xampp/htdocs/PORTAL-COBROS/public/build/img/membrete.jpg';
+        try {
+            // Pasa los datos extra al método base
+            self::generarPDF($serie, 'carta_decomiso', "CARTA_DECOMISO_$serie.pdf", [
+                'prenumero' => $prenumero,
+                'gestor' => $gestor
+            ]);
+        } catch (\Exception $e) {
+            $router->render('errores/no_encontrado', [
+                'mensaje' => $e->getMessage()
+            ]);
+        }
+    }
 
-        // ✅ conviertes la imagen a base64 (100% compatible con Dompdf)
-        if (file_exists($backgroundPath)) {
-            $imagenBase64 = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($backgroundPath));
-        } else {
-            $imagenBase64 = '';
+    public static function generarCartaDevolucion(Router $router)
+    {
+        $serie = $_GET['serie'] ?? '';
+
+        if (!$serie) {
+            $router->render('errores/falta_serie', [
+                'mensaje' => 'Debe proporcionar una serie en la URL'
+            ]);
+            return;
         }
 
-        // Dispones las variables que quieres usar en la plantilla
+        try {
+            // Pasa los datos extra al método base
+            self::generarPDF($serie, 'carta_devolucion', "CARTA_DEVOLUCION_$serie.pdf");
+        } catch (\Exception $e) {
+            $router->render('errores/no_encontrado', [
+                'mensaje' => $e->getMessage()
+            ]);
+        }
+    }
+
+
+    // 🧩 Función base que genera y descarga el PDF
+    private static function generarPDF(string $serie, string $vista, string $nombreArchivo, array $extras = [])
+    {
+        $finiquito = Finiquito::obtenerPorSerie($serie);
+
+        if (!$finiquito) {
+            throw new \Exception("No se encontró información para la serie: $serie");
+        }
+
+        // 📄 Imagen de fondo
+        $backgroundPath = 'C:/xampp/htdocs/PORTAL-COBROS/public/build/img/membrete.jpg';
+        $fondo = file_exists($backgroundPath)
+            ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($backgroundPath))
+            : '';
+
+        // ✅ Variables que estarán disponibles dentro de la vista
+        $variables = [
+            'finiquito' => $finiquito,
+            'fondo' => $fondo,
+            'prenumero' => $extras['prenumero'] ?? '',
+            'gestor' => $extras['gestor'] ?? '',
+        ];
+
+        // ✅ Esto crea variables locales a partir de las claves del array
+        extract($variables);
+
+        // 🧠 Renderizar la vista
         ob_start();
-        $fondo = $imagenBase64;
-        include __DIR__ . "/../views/plantillas/finiquito.php";
+        include __DIR__ . "/../views/plantillas/{$vista}.php";
         $html = ob_get_clean();
 
         // ⚙️ Configurar Dompdf
         $options = new Options();
-        $options->set('isRemoteEnabled', true); // Para permitir imágenes, CSS remoto
+        $options->set('isRemoteEnabled', true);
         $dompdf = new Dompdf($options);
-
         $dompdf->loadHtml($html);
-        $dompdf->setPaper('Letter', 'portrait'); // orientación vertical
+        $dompdf->setPaper('Letter', 'portrait');
         $dompdf->render();
 
-        // 📦 Descarga o muestra el PDF
-        $dompdf->stream("FINIQUITO_$serie.pdf", [
-            "Attachment" => true // true = descarga automática, false = abrir en navegador
-        ]);
+        // 📦 Descargar directamente
+        $dompdf->stream($nombreArchivo, ["Attachment" => true]);
     }
+
 }
