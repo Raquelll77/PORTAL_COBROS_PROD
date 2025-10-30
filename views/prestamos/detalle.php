@@ -259,51 +259,53 @@
         $rolUsuario = $_SESSION['PORTAL_COBROS']['rol'] ?? '';
         $cuentaCancelada = false;
 
-        // ✅ Si no hay registros en saldoPrestamo, asumimos que está cancelada
+        // Lógica para determinar si la cuenta está cancelada
         if (empty($saldoPrestamo)) {
             $cuentaCancelada = true;
         } else {
-            // Si viene saldo, revisa si el saldo capital es <= 0 por si acaso
             $primerSaldo = $saldoPrestamo[0] ?? [];
             if (isset($primerSaldo['Saldo Capital']) && floatval($primerSaldo['Saldo Capital']) <= 0) {
                 $cuentaCancelada = true;
             }
         }
 
+        if (in_array($rolUsuario, ['JEFECOBROS', 'ADMIN'])) {
 
-        $rolUsuario = $_SESSION['PORTAL_COBROS']['rol'] ?? '';
+            if ($cuentaCancelada) {
+                // Muestra SOLO el Finiquito si la cuenta está cancelada
+                ?>
+                <a href="#" class="boton-documento btn-decomiso" id="btn-descargar-finiquito">
+                    Descargar Finiquito
+                </a>
+                <?php
+            } else {
+                // Muestra TODAS las otras opciones si la cuenta NO está cancelada
+                ?>
+                <a href="#" class="boton-documento btn-decomiso" id="btn-descargar-decomiso">
+                    Carta de Decomiso
+                </a>
 
-        // ✅ Mostrar Finiquito solo si está cancelada
-        if ($cuentaCancelada && in_array($rolUsuario, ['JEFECOBROS', 'ADMIN'])) { ?>
-            <a href="#" class="boton-finiquito" id="btn-descargar-finiquito">
-                Descargar Finiquito
-            </a>
-        <?php } ?>
+                <a href="#" class="boton-documento btn-devolucion" id="btn-descargar-devolucion">
+                    Carta de Devolución
+                </a>
 
-        <?php
+                <a href="#" class="boton-documento btn-constancia" id="btn-descargar-constancia">
+                    Constancia Consolidada
+                </a>
 
-        if (in_array($rolUsuario, ['JEFECOBROS', 'ADMIN'])) { ?>
-            <a href="#" class="boton-finiquito" id="btn-descargar-decomiso" style="margin-left:10px;">
-                Carta de Decomiso
-            </a>
+                <a href="#" class="boton-documento btn-dpi" id="btn-descargar-DPI">
+                    Constancia DPI
+                </a>
+                <?php
+            }
+        }
 
-            <a href="#" class="boton-finiquito" id="btn-descargar-devolucion"
-                style="margin-left:10px; background-color:#6c5ce7;">
-                Carta de Devolución
-            </a>
-
-            <a href="#" class="boton-finiquito" id="btn-descargar-constancia"
-                style="margin-left:10px; background-color:#6c6ce7;">
-                Constancia Consolidada
-            </a>
-        <?php } ?>
-
-
-
+        ?>
         <iframe id="iframe-finiquito" style="display:none;"></iframe>
         <iframe id="iframe-decomiso" style="display:none;"></iframe>
         <iframe id="iframe-devolucion" style="display:none;"></iframe>
         <iframe id="iframe-constancia" style="display:none;"></iframe>
+        <iframe id="iframe-DPI" style="display:none;"></iframe>
 
 
         <h3>Comentario Permanente:</h3>
@@ -973,6 +975,25 @@
         // disparar la descarga sin recargar
         const iframe = document.getElementById('iframe-constancia');
         iframe.src = "<?= BASE_URL ?>/detalle/constancia-consolidada?serie=<?= urlencode($_GET['serie'] ?? '') ?>&prenumero=<?= urlencode($_GET['prenumero'] ?? '') ?>&descargar=1";
+
+        // simular cierre del loader después de unos segundos
+        setTimeout(() => Swal.close(), 3500);
+    });
+
+
+    document.getElementById('btn-descargar-DPI')?.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        Swal.fire({
+            title: "Generando Constancia DPI...",
+            text: "Por favor espera mientras se descarga el PDF.",
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        // disparar la descarga sin recargar
+        const iframe = document.getElementById('iframe-DPI');
+        iframe.src = "<?= BASE_URL ?>/detalle/constancia-dpi?serie=<?= urlencode($_GET['serie'] ?? '') ?>&prenumero=<?= urlencode($_GET['prenumero'] ?? '') ?>&descargar=1";
 
         // simular cierre del loader después de unos segundos
         setTimeout(() => Swal.close(), 3500);

@@ -439,3 +439,65 @@ table td, table th {
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 }
+
+// Definición de Variables de Color para la paleta de degradados
+$color-azul-claro: #00f2fe;
+$color-azul-oscuro: #4facfe;
+$color-violeta-oscuro: #6c5ce7;
+$color-amatista: #8a2be2; // Amethyst
+$color-lavanda: #a18cd1;
+$color-rosa-claro: #fbc2eb;
+$color-verde-oscuro: #56ab2f;
+$color-verde-claro: #a8e063;
+
+// Mixin para generar el degradado de forma reutilizable
+@mixin gradient-button($start-color, $middle-color, $end-color: $start-color) {
+    background-image: linear-gradient(to right, $start-color 0%, $middle-color 51%, $end-color 100%);
+}
+
+/* ====================================================== */
+/* Estilo Base para todos los botones de documentos */
+/* ====================================================== */
+.boton-documento {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    color: white !important;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    background-size: 200% auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.2);
+        background-position: right center; /* Mueve el degradado al hacer hover */
+        transform: translateY(-2px);
+    }
+}
+
+/* ====================================================== */
+/* Estilos Específicos por Tipo de Documento */
+/* ====================================================== */
+
+/* 1. Carta de Decomiso (Tono Azul) */
+.btn-decomiso {
+    @include gradient-button(v.$cyan, $color-azul-claro);
+}
+
+/* 2. Carta de Devolución (Tono Morado/Violeta) */
+.btn-devolucion {
+    @include gradient-button($color-violeta-oscuro, $color-amatista);
+}
+
+/* 3. Constancia Consolidada (Tono Púrpura/Rosa) */
+.btn-constancia {
+    @include gradient-button($color-lavanda, $color-rosa-claro);
+}
+
+/* 4. Constancia DPI (Tono Verde/Aqua) */
+.btn-dpi {
+    @include gradient-button($color-verde-oscuro, $color-verde-claro);
+}

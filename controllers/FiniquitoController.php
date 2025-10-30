@@ -103,6 +103,37 @@ class FiniquitoController
         }
     }
 
+    public static function generarConstanciaDpi(Router $router)
+    {
+        $serie = $_GET['serie'] ?? '';
+        $prenumero = $_GET['prenumero'] ?? '';
+
+        if (!$serie) {
+            $router->render('errores/falta_serie', [
+                'mensaje' => 'Debe proporcionar una serie en la URL'
+            ]);
+            return;
+        }
+
+        // 🔹 Consultar saldo del préstamo
+        $saldoPrestamo = [];
+        if (!empty($prenumero)) {
+            $saldoPrestamo = ClientesPrestamos::getSaldoClientes($prenumero);
+        }
+
+        try {
+            // 🔹 Pasar datos a la vista
+            self::generarPDF($serie, 'constancia_dpi', "CONSTANCIA_DPI_$serie.pdf", [
+                'saldo' => $saldoPrestamo,
+                'prenumero' => $prenumero
+            ]);
+        } catch (\Exception $e) {
+            $router->render('errores/no_encontrado', [
+                'mensaje' => $e->getMessage()
+            ]);
+        }
+    }
+
 
     // 🧩 Función base que genera y descarga el PDF
     private static function generarPDF(string $serie, string $vista, string $nombreArchivo, array $extras = [])

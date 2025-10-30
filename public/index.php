@@ -97,6 +97,7 @@ $router->get('/detalle/finiquito', [FiniquitoController::class, 'generarFiniquit
 $router->get('/detalle/carta-decomiso', [FiniquitoController::class, 'generarCartaDecomiso']);
 $router->get('/detalle/carta-devolucion', [FiniquitoController::class, 'generarCartaDevolucion']);
 $router->get('/detalle/constancia-consolidada', [FiniquitoController::class, 'generarConstancia']);
+$router->get('/detalle/constancia-dpi', [FiniquitoController::class, 'generarConstanciaDpi']);
 
 
 

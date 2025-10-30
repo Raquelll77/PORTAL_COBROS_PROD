@@ -16,6 +16,7 @@ class Finiquito extends ActiveRecord
                     (SELECT CardFName FROM OCRD WITH (NOLOCK)
                         WHERE CardCode = t0.CardCode) AS Identidad,   -- 🔹 Identidad del cliente (DNI)
                     t0.DocNum AS NumeroFactura,
+                    t0.DocDate AS FechaFactura,  
                     t16.MnfSerial AS Serie,
                     t16.DistNumber AS Motor,
                     t3.Name AS Marca,
