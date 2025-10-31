@@ -145,7 +145,14 @@ class FiniquitoController
         }
 
         // 📄 Imagen de fondo
-        $backgroundPath = 'C:/xampp/htdocs/PORTAL-COBROS/public/build/img/membrete.jpg';
+
+        if ($vista === 'finiquito') {
+            $backgroundPath = 'C:/xampp/htdocs/PORTAL-COBROS/public/build/img/membrete-sinlogo.jpg';
+        } else {
+            $backgroundPath = 'C:/xampp/htdocs/PORTAL-COBROS/public/build/img/membrete.jpg';
+        }
+
+
         $fondo = file_exists($backgroundPath)
             ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($backgroundPath))
             : '';
